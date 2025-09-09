@@ -23,11 +23,6 @@ R: Eu julgo que a parte especial do projeto é a capacidade de não se prender a
 R: 5.1 - https://postimg.cc/mhd2Hd5N
 5.2 - https://colorado56ecia.wordpress.com/wp-content/uploads/2008/06/cpip-blog-fri2.jpg
 5.3 - https://cdn.prod.website-files.com/6329826d12e3aa3a6966eb1d/63efbea5b6d7ccf214cbedd1_create.png
-______________________________________________
-
-
-5 - 
-
 5.4 - https://www.gabtoschi.com/img/posts/club-penguin-minigame-ranking/roundup.jpg
 
 https://docs.google.com/presentation/d/1WeAQGNfURumMM9xhkfoRcYegYwVJ0baNTqkq0npcRj0/edit?slide=id.p4#slide=id.p4
