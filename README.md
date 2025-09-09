@@ -1,4 +1,4 @@
-# ilha_geladeira
+# Ilha geladeira
 
 ### Qual o nome do projeto?
 
