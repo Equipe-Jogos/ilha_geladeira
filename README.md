@@ -1,8 +1,9 @@
 # ilha_geladeira
 1. Qual o nome do projeto?
-R: Ilha Geladeira
 
-2. Qual o tipo do projeto?
+Ilha Geladeira
+
+3. Qual o tipo do projeto?
 - É um jogo? Qual tipo de jogo?
 - É uma aplicação? Que tipo de aplicação?
 R: O projeto é um Jogo do tipo de Exploração de mundo, a ideia é homenagear o falecido jogo Club Penguin
