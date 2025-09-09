@@ -18,9 +18,9 @@ R: Eu julgo que a parte especial do projeto é a capacidade de não se prender a
 5. Poste telas de "screenshots" do projeto:
 
 R: 
-5.1 - https://postimg.cc/mhd2Hd5N
-5.2 - https://colorado56ecia.wordpress.com/wp-content/uploads/2008/06/cpip-blog-fri2.jpg
-5.3 - https://cdn.prod.website-files.com/6329826d12e3aa3a6966eb1d/63efbea5b6d7ccf214cbedd1_create.png
-5.4 - https://www.gabtoschi.com/img/posts/club-penguin-minigame-ranking/roundup.jpg
+5.1 - https://postimg.cc/mhd2Hd5N <br>
+5.2 - https://colorado56ecia.wordpress.com/wp-content/uploads/2008/06/cpip-blog-fri2.jpg <br>
+5.3 - https://cdn.prod.website-files.com/6329826d12e3aa3a6966eb1d/63efbea5b6d7ccf214cbedd1_create.png <br>
+5.4 - https://www.gabtoschi.com/img/posts/club-penguin-minigame-ranking/roundup.jpg<br>
 
 https://docs.google.com/presentation/d/1WeAQGNfURumMM9xhkfoRcYegYwVJ0baNTqkq0npcRj0/edit?slide=id.p4#slide=id.p4
