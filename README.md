@@ -1,27 +1,23 @@
-# Ilha geladeira
+# ❄️ Ilha Geladeira
 
-### Qual o nome do projeto?
+### 🎮 Tipo do Projeto
 
-R: Ilha Geladeira
+Um jogo de exploração de mundo, inspirado no clássico e falecido Club Penguin, com foco em diversão, interação e liberdade para o jogador.
 
-### Qual o tipo do projeto?
+📝 Descrição
 
-R: O projeto é um Jogo do tipo de Exploração de mundo, a ideia é homenagear o falecido jogo Club Penguin
+O projeto tem como objetivo recriar a experiência nostálgica do Club Penguin, oferecendo um ambiente aberto de exploração. O jogador poderá descobrir segredos, interagir com diferentes áreas do mapa e se divertir em diversos minigames espalhados pelo mundo.
 
-### Descreva o projeto em um parágrafo:
+Mais do que apenas cumprir objetivos, a ideia é criar um playground digital que permita liberdade total ao jogador: ele escolhe o que fazer, quando e como, tornando cada experiência única.
 
-R: A ideia é "recriar" o jogo fazendo um sistema análogo de exploração de mapa e de incentivo ao jogador de explorar, descobrir segredos e minigames ao redor do mapa.
+✨ Diferencial
 
-### Qual parte do projeto é especial?
+A liberdade de exploração é o coração do projeto. Em vez de impor metas rígidas, a Ilha Geladeira proporciona um ambiente expansível, onde a diversão surge da descoberta e interação espontânea.
 
-R: Eu julgo que a parte especial do projeto é a capacidade de não se prender a um objetivo, mas sim dar a liberdade do jogador de escolher o que quer fazer e em que momento ele quer, ser um playground com capacidade de ser expandido futuramente;
+📸 Screenshots
 
-### Poste telas de "screenshots" do projeto:
-
-R: <br>
-5.1 - https://postimg.cc/mhd2Hd5N <br>
-5.2 - https://colorado56ecia.wordpress.com/wp-content/uploads/2008/06/cpip-blog-fri2.jpg <br>
-5.3 - https://cdn.prod.website-files.com/6329826d12e3aa3a6966eb1d/63efbea5b6d7ccf214cbedd1_create.png <br>
-5.4 - https://www.gabtoschi.com/img/posts/club-penguin-minigame-ranking/roundup.jpg<br>
-
+- [Screenshot 1](https://postimg.cc/mhd2Hd5N)  
+- [Screenshot 2](https://colorado56ecia.wordpress.com/wp-content/uploads/2008/06/cpip-blog-fri2.jpg)  
+- [Screenshot 3](https://cdn.prod.website-files.com/6329826d12e3aa3a6966eb1d/63efbea5b6d7ccf214cbedd1_create.png)  
+- [Screenshot 4](https://www.gabtoschi.com/img/posts/club-penguin-minigame-ranking/roundup.jpg)  
 
