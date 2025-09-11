@@ -1,3 +1,5 @@
+![Capa do Projeto](capa.png)
+
 # ❄️ Ilha Geladeira
 
 ### 🎮 Tipo do Projeto
