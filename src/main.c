@@ -28,7 +28,7 @@ int main(int args, char* argc[]){
     
     bool rodando = true;
     SDL_Event evento;
-    int timeout = 16;
+    int timeout = 200;
 
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(0);
@@ -51,18 +51,25 @@ int main(int args, char* argc[]){
 
     while(rodando){
         
-        SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
-        SDL_RenderClear(renderizador);
-        SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
-        SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
-        SDL_RenderFillRect(renderizador, &carregamento);
-        SDL_RenderPresent(renderizador);
-        
-        if(AUX_WaitEventTimeout(&evento, &timeout)){
-            if(evento.type == SDL_QUIT){
-                rodando = false;
+        if(carregamento.w < 800){
+            SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
+            SDL_RenderClear(renderizador);
+            SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
+            SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
+            SDL_RenderFillRect(renderizador, &carregamento);
+            
+            // Evento fechar janela ALT + F4 ou [X]
+            if(AUX_WaitEventTimeout(&evento, &timeout)){
+                if(evento.type == SDL_QUIT){
+                    rodando = false;
+                }
             }
+            carregamento.w += 1;
+            SDL_RenderPresent(renderizador);
+        }else{
+            rodando = false;
         }
+        
     }
 
     // Liberando recursos
