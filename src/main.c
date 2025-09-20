@@ -30,6 +30,7 @@ int main(int args, char* argc[]){
     SDL_Delay(3000);
 
     // Liberando recursos
+    SDL_DestroyTexture(capa);
     SDL_DestroyRenderer(renderizador);
     SDL_DestroyWindow(janela);
     IMG_Quit();
