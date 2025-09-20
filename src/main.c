@@ -1,10 +1,34 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <stdbool.h>
 
 #define LARGURA 800
 #define ALTURA 600
 
+int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
+    if (ms == NULL) {
+        return 0; // segurança
+    }
+
+    Uint32 start = SDL_GetTicks();
+    int result = SDL_WaitEventTimeout(evt, *ms);
+    Uint32 end = SDL_GetTicks();
+    Uint32 elapsed = end - start;
+
+    if (elapsed >= *ms) {
+        *ms = 0;
+    } else {
+        *ms -= elapsed;
+    }
+
+    return result; 
+}
+
 int main(int args, char* argc[]){
+    
+    bool rodando = true;
+    SDL_Event evento;
+    int timeout = 16;
 
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(0);
@@ -21,13 +45,25 @@ int main(int args, char* argc[]){
 
     SDL_Texture *capa = IMG_LoadTexture(renderizador, "imgs/capa.png");
 
-    SDL_Rect quadrado = {0, 0, LARGURA, ALTURA};
+    SDL_Rect img_capa = {0, 0, LARGURA, ALTURA};
 
-    SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
-    SDL_RenderClear(renderizador);
-    SDL_RenderCopy(renderizador, capa, NULL, &quadrado);
-    SDL_RenderPresent(renderizador);
-    SDL_Delay(3000);
+    SDL_Rect carregamento = {0, 0, 1, 20};
+
+    while(rodando){
+        
+        SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
+        SDL_RenderClear(renderizador);
+        SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
+        SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
+        SDL_RenderFillRect(renderizador, &carregamento);
+        SDL_RenderPresent(renderizador);
+        
+        if(AUX_WaitEventTimeout(&evento, &timeout)){
+            if(evento.type == SDL_QUIT){
+                rodando = false;
+            }
+        }
+    }
 
     // Liberando recursos
     SDL_DestroyTexture(capa);
