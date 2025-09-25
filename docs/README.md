@@ -1,4 +1,4 @@
-![Capa do Projeto](capa.png)
+![Capa do Projeto](src/imgs/capa.png)
 
 # ❄️ Ilha Geladeira
 
