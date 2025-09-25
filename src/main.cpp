@@ -2,9 +2,6 @@
 #include <SDL2/SDL_image.h>
 #include "./components/loading/loading.cpp"
 
-#define LARGURA 800
-#define ALTURA 600
-
 int main(int args, char* argc[]){
     
     bool rodando = true;
