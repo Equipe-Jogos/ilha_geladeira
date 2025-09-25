@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "./components/loading/loading.cpp"
+#include "./components/menu/menu.cpp"
 
 int main(int args, char* argc[]){
     
@@ -23,7 +24,8 @@ int main(int args, char* argc[]){
 
     // Mostrar tela de carregamento
     RenderLoadingScreen(janela, renderizador, &evento, &timeout);
-
+    RenderMenuScreen(janela, renderizador, &evento, &timeout);
+    
     while(rodando){
         
         if(AUX_WaitEventTimeout(&evento, &timeout)){
