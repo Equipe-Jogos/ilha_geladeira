@@ -19,11 +19,11 @@ void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event 
   
     if(SDL_PointInRect(&ponto, &quadradoJogar)){
       SDL_RenderCopy(renderizador, botaoJogarSelecionado, NULL, &quadradoJogar);  
+      SDL_RenderPresent(renderizador);
     }else{
       SDL_RenderCopy(renderizador, botaoJogar, NULL, &quadradoJogar); 
+      SDL_RenderPresent(renderizador);
     }
-    
-    SDL_RenderPresent(renderizador);
   }
   IMG_Quit();
 }
