@@ -13,18 +13,12 @@ int RenderLoadingScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Even
 
     while (carregando) {
 
-        if (carregamento.w < 800) {
+        if (carregamento.w < LAGURA) {
             SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
             SDL_RenderClear(renderizador);
             SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
             SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
             SDL_RenderFillRect(renderizador, &carregamento);
-
-            //if (AUX_WaitEventTimeout(evento, timeout)) {
-            //    if(evento.type == SDL_QUIT){
-            //        carregando = false;
-            //    }
-            //} 
             carregamento.w += 1;
             SDL_RenderPresent(renderizador);
         }else {
