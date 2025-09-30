@@ -15,7 +15,7 @@ void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event 
     SDL_SetRenderDrawColor(renderizador, 36, 116, 255, 0);
     SDL_RenderClear(renderizador);
     SDL_GetMouseState(&x, &y);
-    SDL_Point *ponto = {&x, &y};
+    SDL_Point ponto = {x, y};
   
     if(SDL_PointInRect(&ponto, &quadradoJogar)){
       SDL_RenderCopy(renderizador, botaoJogarSelecionado, NULL, &quadradoJogar);  
