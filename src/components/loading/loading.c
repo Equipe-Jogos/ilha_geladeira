@@ -1,8 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
-#include "../../consts/consts.cpp"
-#include "../../utils/Aux_Timeout.cpp"
+#include "../../consts/consts.c"
+#include "../../utils/Aux_Timeout.c"
 
 
 int RenderLoadingScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
