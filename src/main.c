@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "./components/loading/loading.cpp"
-#include "./components/menu/menu.cpp"
+#include "./components/loading/loading.c"
+#include "./components/menu/menu.c"
 
 int main(int args, char* argc[]){
     
