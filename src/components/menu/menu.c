@@ -9,7 +9,7 @@ void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event 
   
   SDL_SetRenderDrawColor(renderizador, 36, 116, 255, 0);
   SDL_RenderClear(renderizador);
-  SDL_RenderCopy(renderer, botaoJogar, NULL, &quadradoJogar);
+  SDL_RenderCopy(renderizador, botaoJogar, NULL, &quadradoJogar);
   SDL_RenderPresent(renderizador);
   
   IMG_Quit();
