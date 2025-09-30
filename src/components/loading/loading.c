@@ -13,7 +13,7 @@ int RenderLoadingScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Even
 
     while (carregando) {
 
-        if (carregamento.w < LAGURA) {
+        if (carregamento.w < LARGURA) {
             SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
             SDL_RenderClear(renderizador);
             SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
