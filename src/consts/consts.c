@@ -5,8 +5,8 @@ para entitular o domínio e liste as constantes seguindo o padrão abaixo
 */
 
 //CONSTANTES DE TELA
-const int LARGURA = 800;
-const int ALTURA = 600;
+const int LARGURA = 1280;
+const int ALTURA = 720;
 
 
 //CONSTANTES DE SISTEMA 
