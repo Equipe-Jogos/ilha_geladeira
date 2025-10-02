@@ -10,7 +10,7 @@ void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event 
   //SDL_Rect azulQ = {350, 250, 50, 50};
   
   SDL_Texture* vermelho_img = IMG_LoadTexture(renderizador, "../src/imgs/cor_vermelho.png");
-  SDL_Texture* verde_img = IMG_LoadTexture(renderizador, "../src/imgs/cor_verde.png");
+  SDL_Texture* verde_img = IMG_LoadTexture(renderizador, "../src/imgs/cor_verde_medio.png");
   //SDL_Texture* azul_img = IMG_LoadTexture(renderizador, "../src/imgs/cor_azul.png");
   
   SDL_SetRenderDrawColor(renderizador, 36, 116, 255, 0);
