@@ -5,7 +5,7 @@
 void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout){
 
   IMG_Init(IMG_INIT_PNG);
-  SDL_Rect vermelhoQ = {350, 200, 100, 100};
+  SDL_Rect vermelhoQ = {500, 200, 100, 100};
   SDL_Rect verdeQ = {500, 250, 100, 100}; 
   SDL_Rect azulQ = {50, 500, 100, 100};
   
