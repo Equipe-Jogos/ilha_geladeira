@@ -16,13 +16,13 @@ inline void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL
 
   int tam_logo_x = 300, tam_logo_y = 200;
   int tam_botao_x = 300, tam_botao_y = 40;
-  int pos_botao_x = LARGURA / 2 - (tam_botao_x / 2);
-  int pos_logo_x = LARGURA / 2 - (tam_logo_x / 2);
+  int pos_botao_x = LARGURA / 2 - (tam_botao_x / 2), pos_botao_y = 2*ALTURA / 5;
+  int pos_logo_x = LARGURA / 2 - (tam_logo_x / 2), pos_logo_y = ALTURA / 8;
 
-  SDL_Rect logo = {pos_logo_x, 50, tam_logo_x, tam_logo_y};
-  SDL_Rect botao_inciar = {pos_botao_x, 200, tam_botao_x, tam_botao_y};
-  SDL_Rect botao_personalizar = {pos_botao_x, 300, tam_botao_x, tam_botao_y}; 
-  SDL_Rect botao_sair = {pos_botao_x, 400, tam_botao_x, tam_botao_y};
+  SDL_Rect logo = {pos_logo_x, pos_logo_y, tam_logo_x, tam_logo_y};
+  SDL_Rect botao_inciar = {pos_botao_x, pos_botao_y, tam_botao_x, tam_botao_y};
+  SDL_Rect botao_personalizar = {pos_botao_x, pos_botao_y + 100, tam_botao_x, tam_botao_y}; 
+  SDL_Rect botao_sair = {pos_botao_x, pos_botao_y + 200, tam_botao_x, tam_botao_y};
   
   //Usar quando achar textura do botão
   //SDL_Texture* textura_botao = IMG_LoadTexture(renderizador, "../src/imgs/cor_vermelho.png");
