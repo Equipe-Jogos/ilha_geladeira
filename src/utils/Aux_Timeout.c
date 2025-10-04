@@ -1,3 +1,4 @@
+#pragma once
 #include <SDL2/SDL.h>
 int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
     if (ms == NULL) {

@@ -1,15 +1,19 @@
-#include "consts.h"
+#ifndef CONSTS_H
+#define CONSTS_H
+#include <SDL2/SDL.h>
+#include <stdbool.h>
+
 /*
 Caso haja constantes de outro domínio, adicione um comentário 
 para entitular o domínio e liste as constantes seguindo o padrão abaixo
 */
 
 //CONSTANTES DE TELA
-const int LARGURA = 800;
-const int ALTURA = 600;
-
+extern const int LARGURA;
+extern const int ALTURA;
 
 //CONSTANTES DE SISTEMA 
-Uint32 timeout = 200;
-bool rodando = true;
+extern Uint32 timeout;
+extern bool rodando;
 
+#endif

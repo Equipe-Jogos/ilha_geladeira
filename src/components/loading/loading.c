@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
-#include "../../consts/consts.c"
+#include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.c"
 
 
