@@ -1,6 +1,9 @@
-#pragma once
+#ifndef AUX_TIMEOUT_H
+#define AUX_TIMEOUT_H
+
 #include <SDL2/SDL.h>
-int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
+
+inline int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
     if (ms == NULL) {
         return 0; // segurança
     }
@@ -18,3 +21,7 @@ int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
 
     return result;
 }
+
+
+
+#endif

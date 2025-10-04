@@ -1,8 +1,12 @@
+#ifndef PERSONALIZACAO_H
+#define PERSONALIZACAO_H
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include "../../consts/consts.h"
+#include "../../utils/Aux_Timeout.h"
 
 typedef enum {
     AMARELO,
@@ -35,7 +39,7 @@ SDL_Texture *pinguins[TOTAL];
 SDL_Texture *cores[TOTAL];
 SDL_Texture * elementos [TOTAL_ELEMENTOS];
 
-void carregaImagens(SDL_Renderer *renderizador)
+inline void carregaImagens(SDL_Renderer *renderizador)
 {
     pinguins[AMARELO]     = IMG_LoadTexture(renderizador, "imgs/pinguim_amarelo.png");
     pinguins[AVERMELHADO] = IMG_LoadTexture(renderizador, "imgs/pinguim_avermelhado.png");
@@ -76,7 +80,7 @@ void carregaImagens(SDL_Renderer *renderizador)
 
 }
 
-int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
+inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
     bool editando = true;
     SDL_SetWindowFullscreen(janela, SDL_WINDOW_FULLSCREEN_DESKTOP);
     SDL_SetWindowPosition(janela, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -149,3 +153,5 @@ int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderizador, S
     SDL_DestroyTexture(pinguim_img);
     return 1;
 }
+
+#endif

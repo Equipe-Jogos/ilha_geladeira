@@ -1,17 +1,21 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "./consts/consts.h"
-#include "./components/loading/loading.c"
-#include "./components/menu/menu.c"
-#include "./components/personalizacao/personalizacao.c"
+#include "./utils/Aux_Timeout.h"
+#include "./components/loading/loading.h"
+#include "./components/menu/menu.h"
+#include "./components/personalizacao/personalizacao.h"
 
 int main(int args, char* argc[]){
     
     SDL_Event evento;
-    Uint32 timeout = 200;
 
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(0);
+
+    int LARGURA = LARGURA_PADRAO, ALTURA = ALTURA_PADRAO;
+    obterTamanhoMonitor(&LARGURA, &ALTURA);
+
     
     SDL_Window *janela = SDL_CreateWindow(
         "Ilha Geladeira", // Título
@@ -25,7 +29,8 @@ int main(int args, char* argc[]){
 
     // Mostrar tela de carregamento
     RenderLoadingScreen(janela, renderizador, &evento, &timeout);
-    RenderPersonalizacaoScreen(janela, renderizador, &evento, &timeout);
+    RenderMenuScreen(janela, renderizador, &evento, &timeout);
+    //RenderPersonalizacaoScreen(janela, renderizador, &evento, &timeout);
     
     while(rodando){
         
