@@ -28,9 +28,7 @@ int main(int args, char* argc[]){
     SDL_Renderer *renderizador = SDL_CreateRenderer(janela, -1, 0);
 
     // Mostrar tela de carregamento
-    //RenderLoadingScreen(janela, renderizador, &evento, &timeout);
-    
-    //RenderPersonalizacaoScreen(janela, renderizador, &evento, &timeout);
+    RenderLoadingScreen(janela, renderizador, &evento, &timeout);
     
     
     RenderMenuScreen(janela, renderizador, &evento, &timeout);

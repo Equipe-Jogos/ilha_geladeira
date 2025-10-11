@@ -32,7 +32,9 @@ typedef enum {
     BALAO2,
     CONTINUAR,
     LOGO,
-    TOTAL_ELEMENTOS
+    TOTAL_ELEMENTOS,
+    VOLTAR,
+    VOLTAR_HOVER
 } Elementos;
 
 SDL_Texture *pinguins[TOTAL];
@@ -77,6 +79,8 @@ inline void carregaImagens(SDL_Renderer *renderizador)
     elementos[BALAO2]     = IMG_LoadTexture(renderizador, "imgs/balao-2.png");
     elementos[CONTINUAR]  = IMG_LoadTexture(renderizador, "imgs/memu_elementos.png");
     elementos[LOGO]       = IMG_LoadTexture(renderizador, "imgs/capa.png");
+    elementos[VOLTAR]     = IMG_LoadTexture(renderizador, "imgs/botoes/voltar.png");
+    elementos[VOLTAR_HOVER] = IMG_LoadTexture(renderizador, "imgs/botoes/voltar_hover.png");
 
 }
 
@@ -87,12 +91,17 @@ inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderiz
     
     carregaImagens(renderizador);
     SDL_Texture *pinguim_img = pinguins[AMARELO];
+
+    int LARGURA, ALTURA;
+    obterTamanhoJanela(janela, &LARGURA, &ALTURA);
     
+    int tam_botao_x = 400, tam_botao_y = 120;
 
     SDL_Rect pinguim= {200, 100, 400, 400};
     SDL_Rect balao1= {150, 400, 200, 200};
     SDL_Rect balao2= {800, 100, 200, 200};
     SDL_Rect continuar= {800, 400, 200, 200};
+    SDL_Rect voltar= {LARGURA/7, (4*ALTURA)/5, tam_botao_x, tam_botao_y};
     SDL_Rect corte = {30,200, 100,80 };
 
     SDL_Rect rectCores[TOTAL];
@@ -113,38 +122,37 @@ inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderiz
 
     SDL_Point  mouse;
 
-    while (rodando)
-    {
+    while (rodando) {
+        SDL_GetMouseState(&mouse.x, &mouse.y);
+
+
         SDL_SetRenderDrawColor(renderizador,225, 225, 255, 0);
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, elementos[BALAO1], NULL , &balao1);
         SDL_RenderCopy(renderizador, elementos[BALAO2], NULL , &balao2);
         SDL_RenderCopy(renderizador, elementos[CONTINUAR], &corte , &continuar);
+        SDL_RenderCopy(renderizador, SDL_PointInRect(&mouse, &voltar) ? elementos[VOLTAR_HOVER] : elementos[VOLTAR], NULL, &voltar);
 
-        SDL_GetMouseState(&mouse.x, &mouse.y);
 
-        if (AUX_WaitEventTimeout(evento, timeout))
-        {
-            if (evento->type == SDL_MOUSEBUTTONDOWN)
-            {
-                for (int i = 0; i< TOTAL; i++)
-                {
-                    if (SDL_PointInRect(&mouse, &rectCores[i]))
-                    {
+        if (AUX_WaitEventTimeout(evento, timeout)) {
+            if (evento->type == SDL_MOUSEBUTTONDOWN) {
+                if (SDL_PointInRect(&mouse, &voltar)) {
+                    return 1;
+                }
+                for (int i = 0; i< TOTAL; i++) {
+                    if (SDL_PointInRect(&mouse, &rectCores[i])) {
                         pinguim_img = pinguins[i];
                     }
                 }
             }
-            else if(evento->type == SDL_QUIT)
-            {
+            else if(evento->type == SDL_QUIT) {
                 rodando = false;
             }
         }
 
         SDL_RenderCopy(renderizador, pinguim_img, NULL , &pinguim);
         SDL_SetRenderDrawColor(renderizador,0, 225, 255, 0);
-         for (int i = 0; i < TOTAL; i++) 
-         {
+         for (int i = 0; i < TOTAL; i++) {
             SDL_RenderCopy(renderizador, cores[i], NULL , &rectCores[i]);
         }
         SDL_RenderPresent(renderizador);
