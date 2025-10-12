@@ -99,7 +99,7 @@ inline void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL
             // Verifica se clicou no botão sair
             else if(mouse_in_sair){
               //sair do jogo
-              return;
+              exit(0);
             }
           }
           break;
