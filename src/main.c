@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include "./consts/consts.h"
 #include "./components/loading/loading.h"
 #include "./components/menu/menu.h"
@@ -22,12 +21,6 @@ int main(int args, char* argc[]) {
         return -1;
     }
 
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        SDL_Log("Erro ao iniciar SDL_image: %s", IMG_GetError());
-        SDL_Quit();
-        return -1;
-    }
-
     // Dimensões da tela
     int LARGURA = LARGURA_PADRAO;
     int ALTURA = ALTURA_PADRAO;
@@ -45,7 +38,6 @@ int main(int args, char* argc[]) {
 
     if (!janela) {
         SDL_Log("Erro ao criar janela: %s", SDL_GetError());
-        IMG_Quit();
         SDL_Quit();
         return -1;
     }
@@ -54,7 +46,6 @@ int main(int args, char* argc[]) {
     if (!renderizador) {
         SDL_Log("Erro ao criar renderizador: %s", SDL_GetError());
         SDL_DestroyWindow(janela);
-        IMG_Quit();
         SDL_Quit();
         return -1;
     }
@@ -110,7 +101,6 @@ int main(int args, char* argc[]) {
     // Libera recursos
     SDL_DestroyRenderer(renderizador);
     SDL_DestroyWindow(janela);
-    IMG_Quit();
     SDL_Quit();
 
     return 0;
