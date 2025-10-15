@@ -3,11 +3,8 @@
 #include "./components/loading/loading.h"
 #include "./components/menu/menu.h"
 #include "./components/personalizacao/personalizacao.h"
-<<<<<<< HEAD
 #include "./components/sled_racing/sled_racing.h"
-=======
 #include "./components/game_screen/game_screen.h"
->>>>>>> refs/remotes/origin/main
 
 
 int main(int args, char* argc[]) {
@@ -68,17 +65,13 @@ int main(int args, char* argc[]) {
                 break;
             
             case STATE_JOGANDO:
-                RenderGameScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
-                break;
+                //RenderGameScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+              RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+	      	break;
 
             case STATE_SAIR:
                 rodando = false;
-                break;
-
-            case STATE_JOGANDO:
-                RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
-                rodando = true;
-                break;
+                break;          
 
             default:
                 rodando = false;
