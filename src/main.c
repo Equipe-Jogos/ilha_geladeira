@@ -3,6 +3,7 @@
 #include "./components/loading/loading.h"
 #include "./components/menu/menu.h"
 #include "./components/personalizacao/personalizacao.h"
+#include "./components/sled_racing/sled_racing.h"
 
 
 int main(int args, char* argc[]) {
@@ -48,6 +49,7 @@ int main(int args, char* argc[]) {
 
     // Loop principal da FSM
     while (rodando) {
+                
         switch (estadoJogo) {
             case STATE_LOADING:
                 // Para começar, apenas renderiza e passa para MENU
@@ -83,6 +85,11 @@ int main(int args, char* argc[]) {
 
             case STATE_SAIR:
                 rodando = false;
+                break;
+
+            case STATE_JOGANDO:
+                RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+                rodando = true;
                 break;
 
             default:
