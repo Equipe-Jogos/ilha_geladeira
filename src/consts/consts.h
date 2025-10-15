@@ -2,7 +2,7 @@
 #define CONSTS_H
 #include <SDL2/SDL.h>
 #include <stdbool.h>
-#include "../utils/Aux_motinor.h"
+#include "../utils/Aux_monitor.h"
 
 /*
 Caso haja constantes de outro domínio, adicione um comentário 

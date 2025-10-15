@@ -38,8 +38,7 @@ static inline int RenderLoadingScreen(
             carregando = false;
         }
     }
-
-
+    *estadoJogo = STATE_MENU;
     // Liberando recursos
     SDL_DestroyTexture(capa);
     return 1;
