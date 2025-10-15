@@ -51,35 +51,15 @@ int main(int args, char* argc[]) {
     while (rodando) {
         switch (estadoJogo) {
             case STATE_LOADING:
-                // Para começar, apenas renderiza e passa para MENU
                 RenderLoadingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
-                estadoJogo = STATE_MENU;
                 break;
 
             case STATE_MENU:
                 RenderMenuScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
-                // Exemplo de transição manual: tecla 1 para PERSONALIZACAO, ESC para sair
-                while (SDL_PollEvent(&evento)) {
-                    if (evento.type == SDL_QUIT) estadoJogo = STATE_SAIR;
-                    if (evento.type == SDL_KEYDOWN) {
-                        if (evento.key.keysym.sym == SDLK_1)
-                            estadoJogo = STATE_PERSONALIZACAO;
-                        else if (evento.key.keysym.sym == SDLK_ESCAPE)
-                            estadoJogo = STATE_SAIR;
-                    }
-                }
                 break;
 
             case STATE_PERSONALIZACAO:
                 RenderPersonalizacaoScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
-                // Exemplo de retorno para menu
-                while (SDL_PollEvent(&evento)) {
-                    if (evento.type == SDL_QUIT) estadoJogo = STATE_SAIR;
-                    if (evento.type == SDL_KEYDOWN) {
-                        if (evento.key.keysym.sym == SDLK_ESCAPE)
-                            estadoJogo = STATE_MENU;
-                    }
-                }
                 break;
             
             case STATE_JOGANDO:
