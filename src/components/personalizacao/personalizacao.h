@@ -41,7 +41,7 @@ SDL_Texture *pinguins[TOTAL];
 SDL_Texture *cores[TOTAL];
 SDL_Texture * elementos [TOTAL_ELEMENTOS];
 
-inline void carregaImagens(SDL_Renderer *renderizador)
+static inline void carregaImagens(SDL_Renderer *renderizador)
 {
     pinguins[AMARELO]     = IMG_LoadTexture(renderizador, "imgs/pinguim_amarelo.png");
     pinguins[AVERMELHADO] = IMG_LoadTexture(renderizador, "imgs/pinguim_avermelhado.png");
@@ -84,7 +84,7 @@ inline void carregaImagens(SDL_Renderer *renderizador)
 
 }
 
-inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
+static inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
     bool editando = true;
     SDL_SetWindowFullscreen(janela, SDL_WINDOW_FULLSCREEN_DESKTOP);
     SDL_SetWindowPosition(janela, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);

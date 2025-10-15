@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 
 
-inline void obterTamanhoMonitor(int* largura, int* altura) {
+static inline void obterTamanhoMonitor(int* largura, int* altura) {
     SDL_DisplayMode displayMode;
 
     if (SDL_GetDesktopDisplayMode(0, &displayMode) == 0) {
@@ -17,11 +17,11 @@ inline void obterTamanhoMonitor(int* largura, int* altura) {
     }
 }
 
-inline void obterTamanhoJanela(SDL_Window* janela, int* largura, int* altura) {
+static inline void obterTamanhoJanela(SDL_Window* janela, int* largura, int* altura) {
     SDL_GetWindowSize(janela, largura, altura);
 }
 
-inline void obterInfoMonitor(int indice_monitor, int* largura, int* altura, int* refresh_rate) {
+static inline void obterInfoMonitor(int indice_monitor, int* largura, int* altura, int* refresh_rate) {
     SDL_DisplayMode displayMode;
     if (SDL_GetDesktopDisplayMode(indice_monitor, &displayMode) == 0) {
         *largura = displayMode.w;

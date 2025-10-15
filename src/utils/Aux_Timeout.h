@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-inline int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
+static inline int AUX_WaitEventTimeout(SDL_Event *evt, Uint32 *ms) {
     if (ms == NULL) {
         return 0; // segurança
     }
