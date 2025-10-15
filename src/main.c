@@ -3,6 +3,7 @@
 #include "./components/loading/loading.h"
 #include "./components/menu/menu.h"
 #include "./components/personalizacao/personalizacao.h"
+#include "./components/game_screen/game_screen.h"
 
 
 int main(int args, char* argc[]) {
@@ -79,6 +80,10 @@ int main(int args, char* argc[]) {
                             estadoJogo = STATE_MENU;
                     }
                 }
+                break;
+            
+            case STATE_JOGANDO:
+                RenderGameScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
                 break;
 
             case STATE_SAIR:
