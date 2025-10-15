@@ -4,13 +4,6 @@
 #include "./components/menu/menu.h"
 #include "./components/personalizacao/personalizacao.h"
 
-// Definição dos estados do jogo
-typedef enum {
-    STATE_LOADING,
-    STATE_MENU,
-    STATE_PERSONALIZACAO,
-    STATE_SAIR
-} GameState;
 
 int main(int args, char* argc[]) {
     SDL_Event evento;
@@ -51,39 +44,39 @@ int main(int args, char* argc[]) {
     }
 
     // Estado inicial
-    GameState estadoAtual = STATE_LOADING;
+    GameState estadoJogo = STATE_LOADING;
 
     // Loop principal da FSM
     while (rodando) {
-        switch (estadoAtual) {
+        switch (estadoJogo) {
             case STATE_LOADING:
                 // Para começar, apenas renderiza e passa para MENU
-                RenderLoadingScreen(janela, renderizador, &evento, &timeout);
-                estadoAtual = STATE_MENU;
+                RenderLoadingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+                estadoJogo = STATE_MENU;
                 break;
 
             case STATE_MENU:
-                RenderMenuScreen(janela, renderizador, &evento, &timeout);
+                RenderMenuScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
                 // Exemplo de transição manual: tecla 1 para PERSONALIZACAO, ESC para sair
                 while (SDL_PollEvent(&evento)) {
-                    if (evento.type == SDL_QUIT) estadoAtual = STATE_SAIR;
+                    if (evento.type == SDL_QUIT) estadoJogo = STATE_SAIR;
                     if (evento.type == SDL_KEYDOWN) {
                         if (evento.key.keysym.sym == SDLK_1)
-                            estadoAtual = STATE_PERSONALIZACAO;
+                            estadoJogo = STATE_PERSONALIZACAO;
                         else if (evento.key.keysym.sym == SDLK_ESCAPE)
-                            estadoAtual = STATE_SAIR;
+                            estadoJogo = STATE_SAIR;
                     }
                 }
                 break;
 
             case STATE_PERSONALIZACAO:
-                RenderPersonalizacaoScreen(janela, renderizador, &evento, &timeout);
+                RenderPersonalizacaoScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
                 // Exemplo de retorno para menu
                 while (SDL_PollEvent(&evento)) {
-                    if (evento.type == SDL_QUIT) estadoAtual = STATE_SAIR;
+                    if (evento.type == SDL_QUIT) estadoJogo = STATE_SAIR;
                     if (evento.type == SDL_KEYDOWN) {
                         if (evento.key.keysym.sym == SDLK_ESCAPE)
-                            estadoAtual = STATE_MENU;
+                            estadoJogo = STATE_MENU;
                     }
                 }
                 break;

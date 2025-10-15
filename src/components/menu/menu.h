@@ -4,10 +4,18 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
+#include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
 #include "../personalizacao/personalizacao.h"
 
-static inline void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout){
+static inline int RenderMenuScreen(
+  SDL_Window *janela, 
+  SDL_Renderer *renderizador, 
+  SDL_Event * evento, 
+  Uint32 *timeout,
+  GameState *estadoJogo
+){
+
   SDL_SetWindowFullscreen(janela, SDL_WINDOW_FULLSCREEN_DESKTOP);
   SDL_SetWindowPosition(janela, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
@@ -84,31 +92,27 @@ static inline void RenderMenuScreen(SDL_Window *janela, SDL_Renderer *renderizad
       switch(evento->type) {
         case SDL_MOUSEBUTTONDOWN:
           if(evento->button.button == SDL_BUTTON_LEFT){
-            int click_x = evento->button.x;
-            int click_y = evento->button.y;
-            
-            // Verifica se clicou no botão iniciar
             if(mouse_in_iniciar){
               //iniciar jogo
+              *estadoJogo = STATE_JOGANDO;
+              return 1;
             }
-            // Verifica se clicou no botão personalizar
             else if(mouse_in_personalizar){
               //abrir tela de personalizar personagem
-              RenderPersonalizacaoScreen(janela, renderizador, evento, timeout);
+              *estadoJogo = STATE_PERSONALIZACAO;
+              return 1;
             }
-            // Verifica se clicou no botão sair
             else if(mouse_in_sair){
-              //sair do jogo
-              exit(0);
+              *estadoJogo = STATE_SAIR;
+              return 0;
             }
           }
           break;
         case SDL_QUIT:
-          return;
+          *estadoJogo = STATE_SAIR;
+          return 0;
           break;
       }
-    } else {
-      
     }
 
     SDL_RenderPresent(renderizador);

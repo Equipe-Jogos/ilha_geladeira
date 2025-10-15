@@ -7,7 +7,14 @@
 #include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
 
-static inline int RenderLoadingScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
+static inline int RenderLoadingScreen(
+    SDL_Window *janela, 
+    SDL_Renderer *renderizador, 
+    SDL_Event *evento, 
+    Uint32 *timeout,
+    GameState *estadoJogo
+) {
+    
     SDL_Texture *capa = IMG_LoadTexture(renderizador, "imgs/capa.png");
 
     int LARGURA, ALTURA;

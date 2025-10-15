@@ -18,5 +18,13 @@ const int ALTURA_PADRAO = 600;
 Uint32 timeout = 200;
 bool rodando = true;
 
+typedef enum {
+    STATE_LOADING,
+    STATE_MENU,
+    STATE_JOGANDO,
+    STATE_PERSONALIZACAO,
+    STATE_SAIR
+} GameState;
+
 
 #endif

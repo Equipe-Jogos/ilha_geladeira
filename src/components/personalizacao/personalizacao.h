@@ -41,8 +41,7 @@ SDL_Texture *pinguins[TOTAL];
 SDL_Texture *cores[TOTAL];
 SDL_Texture * elementos [TOTAL_ELEMENTOS];
 
-static inline void carregaImagens(SDL_Renderer *renderizador)
-{
+static inline void carregaImagens(SDL_Renderer *renderizador) {
     pinguins[AMARELO]     = IMG_LoadTexture(renderizador, "imgs/pinguim_amarelo.png");
     pinguins[AVERMELHADO] = IMG_LoadTexture(renderizador, "imgs/pinguim_avermelhado.png");
     pinguins[AZUL_FORTE]  = IMG_LoadTexture(renderizador, "imgs/pinguim_azul_forte.png");
@@ -81,10 +80,16 @@ static inline void carregaImagens(SDL_Renderer *renderizador)
     elementos[LOGO]       = IMG_LoadTexture(renderizador, "imgs/capa.png");
     elementos[VOLTAR]     = IMG_LoadTexture(renderizador, "imgs/botoes/voltar.png");
     elementos[VOLTAR_HOVER] = IMG_LoadTexture(renderizador, "imgs/botoes/voltar_hover.png");
-
 }
 
-static inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event *evento, Uint32 *timeout) {
+static inline int RenderPersonalizacaoScreen(
+    SDL_Window *janela, 
+    SDL_Renderer *renderizador, 
+    SDL_Event *evento, 
+    Uint32 *timeout,
+    GameState *estadoJogo
+) {
+
     bool editando = true;
     SDL_SetWindowFullscreen(janela, SDL_WINDOW_FULLSCREEN_DESKTOP);
     SDL_SetWindowPosition(janela, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -122,7 +127,7 @@ static inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *r
 
     SDL_Point  mouse;
 
-    while (rodando) {
+    while (true) {
         SDL_GetMouseState(&mouse.x, &mouse.y);
 
 
@@ -137,6 +142,7 @@ static inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *r
         if (AUX_WaitEventTimeout(evento, timeout)) {
             if (evento->type == SDL_MOUSEBUTTONDOWN) {
                 if (SDL_PointInRect(&mouse, &voltar)) {
+                    *estadoJogo = STATE_MENU;
                     return 1;
                 }
                 for (int i = 0; i< TOTAL; i++) {
@@ -146,7 +152,8 @@ static inline int RenderPersonalizacaoScreen(SDL_Window *janela, SDL_Renderer *r
                 }
             }
             else if(evento->type == SDL_QUIT) {
-                rodando = false;
+                *estadoJogo = STATE_SAIR;
+                return 0;
             }
         }
 
