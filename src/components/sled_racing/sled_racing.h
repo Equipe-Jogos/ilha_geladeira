@@ -63,31 +63,43 @@ static inline int RenderSledRacingScreen(SDL_Window *janela, SDL_Renderer *rende
     double coef = -0.5;         // inclinação da linha diagonal
     int y_base = ALTURA;         // ponto inicial Y (canto inferior da tela)
     int x_base = LARGURA;        // ponto inicial X (canto direito da tela)
-
+    char pistaLog1[20];
+    char pistaLog2[20];
+    char pistaLog3[20];
+    char pistaLog4[20];
+    
     Sprite pista[6];
     pista[0].rec.x = 0;
     pista[0].rec.y = (int)(coef * (x_base - pista[0].rec.x) + y_base);
     pista[0].rec.w = 1000;
     pista[0].rec.h = 506;
     pista[0].textura = terrenos[0];
+    sprintf(pistaLog1, "%d", pista[0].rec.y ); 
+    SDL_Log(pistaLog1);
 
     pista[1].rec.x = 620;
     pista[1].rec.y = (int)(coef * (x_base - pista[1].rec.x) + y_base);
     pista[1].rec.w = 691;
     pista[1].rec.h = 415;
     pista[1].textura = terrenos[1];
+    sprintf(pistaLog2, "%d", pista[1].rec.y ); 
+    SDL_Log(pistaLog2);
  
     pista[2].rec.x = 955;
     pista[2].rec.y = (int)(coef * (x_base - pista[2].rec.x) + y_base);
     pista[2].rec.w = 691;
     pista[2].rec.h = 415;
     pista[2].textura = terrenos[2];
+    sprintf(pistaLog3, "%d", pista[2].rec.y ); 
+    SDL_Log(pistaLog3);
 
     pista[3].rec.x = 1290;
     pista[3].rec.y = (int)(coef * (x_base - pista[3].rec.x) + y_base);
     pista[3].rec.w = 691;
     pista[3].rec.h = 415;
     pista[3].textura = terrenos[3];
+    sprintf(pistaLog4, "%d", pista[3].rec.y ); 
+    SDL_Log(pistaLog4);
 
     while (true) {
         SDL_GetMouseState(&mouse.x, &mouse.y);
