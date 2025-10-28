@@ -23,6 +23,7 @@ static inline int RenderLoadingScreen(
     SDL_Rect img_capa = {0, 0, LARGURA, ALTURA};
     SDL_Rect carregamento = {0, 0, 1, 20};
     bool carregando = true;
+    int velocidade = LARGURA / 1000;
 
     while (carregando) {
 
@@ -32,7 +33,7 @@ static inline int RenderLoadingScreen(
             SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
             SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
             SDL_RenderFillRect(renderizador, &carregamento);
-            carregamento.w += 1;
+            carregamento.w += velocidade; 
             SDL_RenderPresent(renderizador);
         }else {
             carregando = false;
