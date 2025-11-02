@@ -8,6 +8,8 @@
 #include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
 
+// ---------------- ENUMS ----------------
+
 typedef enum {
     AMARELO,
     AVERMELHADO,
@@ -37,9 +39,21 @@ typedef enum {
     VOLTAR_HOVER
 } Elementos;
 
+// ---------------- VARIÁVEIS GLOBAIS ----------------
+
+// Variáveis globais de textura
 SDL_Texture *pinguins[TOTAL];
 SDL_Texture *cores[TOTAL];
-SDL_Texture * elementos [TOTAL_ELEMENTOS];
+SDL_Texture *elementos[TOTAL_ELEMENTOS];
+
+// Declaração global da cor selecionada
+extern Cor corSelecionada;
+
+#ifdef PERSONALIZACAO_IMPLEMENTACAO
+Cor corSelecionada = AMARELO; // Definição única aqui
+#endif
+
+// ---------------- FUNÇÕES ----------------
 
 static inline void carregaImagens(SDL_Renderer *renderizador) {
     pinguins[AMARELO]     = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_amarelo.png");
@@ -74,11 +88,11 @@ static inline void carregaImagens(SDL_Renderer *renderizador) {
     cores[VERDE_VOMITO]   = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_verde_vomito.png");
     cores[VERMELHO]       = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_vermelho.png");
 
-    elementos[BALAO1]     = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-1.png");
-    elementos[BALAO2]     = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-2.png");
-    elementos[CONTINUAR]  = IMG_LoadTexture(renderizador, "imgs/personalizar/memu_elementos.png");
-    elementos[LOGO]       = IMG_LoadTexture(renderizador, "imgs/capa.png");
-    elementos[VOLTAR]     = IMG_LoadTexture(renderizador, "imgs/botoes/voltar.png");
+    elementos[BALAO1]       = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-1.png");
+    elementos[BALAO2]       = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-2.png");
+    elementos[CONTINUAR]    = IMG_LoadTexture(renderizador, "imgs/personalizar/memu_elementos.png");
+    elementos[LOGO]         = IMG_LoadTexture(renderizador, "imgs/capa.png");
+    elementos[VOLTAR]       = IMG_LoadTexture(renderizador, "imgs/botoes/voltar.png");
     elementos[VOLTAR_HOVER] = IMG_LoadTexture(renderizador, "imgs/botoes/voltar_hover.png");
 }
 
@@ -96,6 +110,7 @@ static inline int RenderPersonalizacaoScreen(
     
     carregaImagens(renderizador);
     SDL_Texture *pinguim_img = pinguins[AMARELO];
+    corSelecionada = AMARELO;
 
     int LARGURA, ALTURA;
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
@@ -113,10 +128,9 @@ static inline int RenderPersonalizacaoScreen(
 
     int startX = 900;
     int startY = 250;
-    int espaco = 20;   // sem espaço extra, 5 cabem certinho
+    int espaco = 20;
     int largura = 100;
     int altura  = 100;
-
 
     for (int i = 0; i < TOTAL; i++) {
         rectCores[i].x = startX + (i % 5) * (largura + espaco);
@@ -125,11 +139,10 @@ static inline int RenderPersonalizacaoScreen(
         rectCores[i].h = altura;
     }
 
-    SDL_Point  mouse;
+    SDL_Point mouse;
 
     while (true) {
         SDL_GetMouseState(&mouse.x, &mouse.y);
-
 
         SDL_SetRenderDrawColor(renderizador,225, 225, 255, 0);
         SDL_RenderClear(renderizador);
@@ -138,16 +151,16 @@ static inline int RenderPersonalizacaoScreen(
         SDL_RenderCopy(renderizador, elementos[CONTINUAR], &corte , &continuar);
         SDL_RenderCopy(renderizador, SDL_PointInRect(&mouse, &voltar) ? elementos[VOLTAR_HOVER] : elementos[VOLTAR], NULL, &voltar);
 
-
         if (AUX_WaitEventTimeout(evento, timeout)) {
             if (evento->type == SDL_MOUSEBUTTONDOWN) {
                 if (SDL_PointInRect(&mouse, &voltar)) {
                     *estadoJogo = STATE_MENU;
                     return 1;
                 }
-                for (int i = 0; i< TOTAL; i++) {
+                for (int i = 0; i < TOTAL; i++) {
                     if (SDL_PointInRect(&mouse, &rectCores[i])) {
                         pinguim_img = pinguins[i];
+                        corSelecionada = i; // 🔹 Atualiza a cor global
                     }
                 }
             }
@@ -159,12 +172,12 @@ static inline int RenderPersonalizacaoScreen(
 
         SDL_RenderCopy(renderizador, pinguim_img, NULL , &pinguim);
         SDL_SetRenderDrawColor(renderizador,0, 225, 255, 0);
-         for (int i = 0; i < TOTAL; i++) {
+        for (int i = 0; i < TOTAL; i++) {
             SDL_RenderCopy(renderizador, cores[i], NULL , &rectCores[i]);
         }
         SDL_RenderPresent(renderizador);
     }
-    // Liberando recursos
+
     SDL_DestroyTexture(pinguim_img);
     return 1;
 }

@@ -1,3 +1,4 @@
+#define PERSONALIZACAO_IMPLEMENTACAO
 #include <SDL2/SDL.h>
 #include "./consts/consts.h"
 #include "./components/loading/loading.h"
