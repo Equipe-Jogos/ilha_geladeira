@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/Aux_monitor.h"
+#include "../personalizacao/personalizacao.h" 
 
 static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout, GameState *estadoJogo) {
     int LARGURA, ALTURA;
