@@ -18,6 +18,7 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
 
     IMG_Init(IMG_INIT_PNG);
     SDL_Texture *centroIMG = IMG_LoadTexture(renderizador, "imgs/centro.png");
+
     switch (corSelecionada) {
         case 0:
             sprintf(caminho, "imgs/pinguim/amarelo/000.png");
@@ -31,30 +32,29 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         case 3:
             sprintf(caminho, "imgs/pinguim/azul_claro/000.png");
             break;
-        case 4:
-            SDL_Log("cinza");
-            sprintf(caminho, "imgs/pinguim/cinza/000.png");
-            break;
         case 5:
-            sprintf(caminho, "imgs/pinguim/branco/000.png");
+            sprintf(caminho, "imgs/pinguim/cinza/000.png");
             break;
         case 6:
-            sprintf(caminho, "imgs/pinguim/roxo/000.png");
-            break;
-        case 7:
-            sprintf(caminho, "imgs/pinguim/rosa/000.png");
-            break;
-        case 8:
             sprintf(caminho, "imgs/pinguim/laranja/000.png");
             break;
-        case 9:
-            sprintf(caminho, "imgs/pinguim/cinza/000.png");
-            break;
-        case 10:
+        case 7:
             sprintf(caminho, "imgs/pinguim/marrom/000.png");
             break;
+        case 8:
+            sprintf(caminho, "imgs/pinguim/preto/000.png");
+            break;
+        case 10:
+            sprintf(caminho, "imgs/pinguim/roxo/000.png");
+            break;
         case 11:
-            sprintf(caminho, "imgs/pinguim/ciano/000.png");
+            sprintf(caminho, "imgs/pinguim/verdeMusgo/000.png");
+            break;
+        case 12:
+            sprintf(caminho, "imgs/pinguim/verdeEscuro/000.png");
+            break;
+        case 13:
+            sprintf(caminho, "imgs/pinguim/verde/000.png");
             break;
     }
 
