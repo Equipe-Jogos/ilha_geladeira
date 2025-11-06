@@ -160,7 +160,7 @@ static inline int RenderPersonalizacaoScreen(
                 for (int i = 0; i < TOTAL; i++) {
                     if (SDL_PointInRect(&mouse, &rectCores[i])) {
                         pinguim_img = pinguins[i];
-                        corSelecionada = i; // 🔹 Atualiza a cor global
+                        corSelecionada = (Cor)i; // 🔹 Atualiza a cor global
                     }
                 }
             }
