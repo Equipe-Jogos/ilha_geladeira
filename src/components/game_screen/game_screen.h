@@ -8,6 +8,7 @@
 #include <math.h>
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/Aux_monitor.h"
+#include "../../consts/consts.h"
 #include "../personalizacao/personalizacao.h" 
 
 static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout, GameState *estadoJogo) {
@@ -20,46 +21,42 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     IMG_Init(IMG_INIT_PNG);
     SDL_Texture *centroIMG = IMG_LoadTexture(renderizador, "imgs/centro.png");
 
-    switch (corSelecionada) {
-        case 0:
-            sprintf(caminho, "imgs/pinguim/amarelo/000.png");
-            break;
-        case 1:
-            sprintf(caminho, "imgs/pinguim/rosa/000.png");
-            break;
-        case 2:
-            sprintf(caminho, "imgs/pinguim/azul/000.png");
-            break;
-        case 3:
-            sprintf(caminho, "imgs/pinguim/azul_claro/000.png");
-            break;
-        case 5:
-            sprintf(caminho, "imgs/pinguim/cinza/000.png");
-            break;
-        case 6:
-            sprintf(caminho, "imgs/pinguim/laranja/000.png");
-            break;
-        case 7:
-            sprintf(caminho, "imgs/pinguim/marrom/000.png");
-            break;
-        case 8:
-            sprintf(caminho, "imgs/pinguim/preto/000.png");
-            break;
-        case 10:
-            sprintf(caminho, "imgs/pinguim/roxo/000.png");
-            break;
-        case 11:
-            sprintf(caminho, "imgs/pinguim/verdeMusgo/000.png");
-            break;
-        case 12:
-            sprintf(caminho, "imgs/pinguim/verdeEscuro/000.png");
-            break;
-        case 13:
-            sprintf(caminho, "imgs/pinguim/verde/000.png");
-            break;
-    }
 
-    SDL_Texture *textura_pinguim_0 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "000");
+    printf("caminho000: %s\n", caminho);
+    SDL_Texture *textura_pinguim_000 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "045");
+    printf("caminho045: %s\n", caminho);
+    SDL_Texture *textura_pinguim_045 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "090");
+    printf("caminho090: %s\n", caminho);
+    SDL_Texture *textura_pinguim_090 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "135");
+    printf("caminho135: %s\n", caminho);
+    SDL_Texture *textura_pinguim_135 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "180");
+    printf("caminho180: %s\n", caminho);
+    SDL_Texture *textura_pinguim_180 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "225");
+    printf("caminho225: %s\n", caminho);
+    SDL_Texture *textura_pinguim_225 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "270");
+    printf("caminho270: %s\n", caminho);
+        SDL_Texture *textura_pinguim_270 = IMG_LoadTexture(renderizador, caminho);
+    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "315");
+    printf("caminho315: %s\n", caminho);
+    SDL_Texture *textura_pinguim_315 = IMG_LoadTexture(renderizador, caminho);
+    SDL_Texture *textura_atual = textura_pinguim_000;
+
+    printf("textura_pinguim_000: %p\n", textura_pinguim_000);
+    printf("textura_pinguim_045: %p\n", textura_pinguim_045);
+    printf("textura_pinguim_090: %p\n", textura_pinguim_090);
+    printf("textura_pinguim_135: %p\n", textura_pinguim_135);
+    printf("textura_pinguim_180: %p\n", textura_pinguim_180);
+    printf("textura_pinguim_225: %p\n", textura_pinguim_225);
+    printf("textura_pinguim_270: %p\n", textura_pinguim_270);
+    printf("textura_pinguim_315: %p\n", textura_pinguim_315);
+    printf("______________________________________\n");
   
     
     SDL_Rect pinguimRect = {LARGURA/2, ALTURA/2, 100, 160};
@@ -68,7 +65,7 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     float escalar_velocidade = 1, velocidade_x = 0, velocidade_y = 0;
     float pinguim_x = (LARGURA/2.0f), pinguim_y = (ALTURA/2.0f);
     float destino_x = pinguim_x, destino_y = pinguim_y;
-    float distancia = 0,dx = 0, dy = 0;
+    float distancia = 0, direcao_rad = 0, dx = 0, dy = 0;
 
     while (true) {
         if (distancia > 0.5f) {
@@ -97,7 +94,7 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, centroIMG, NULL, &centroRect);
-        SDL_RenderCopy(renderizador, textura_pinguim_0, NULL, &pinguimRect);
+        SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
 
         if (AUX_WaitEventTimeout(evento, timeout)) {
             if (evento->type == SDL_KEYDOWN) {
@@ -121,9 +118,36 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
                 dx = destino_x - pinguim_x;
                 dy = destino_y - pinguim_y;
                 distancia =  sqrt(dx*dx + dy*dy);
-                
-                if (distancia > 0) {
+                direcao_rad = atan2(dy, dx);
 
+                printf("direcao_rad: %f\n", direcao_rad);
+                if (direcao_rad < 5*M_PI/8 && direcao_rad >= 3*M_PI/8) {
+                    printf("DIRECAO: 000\n");
+                    textura_atual = textura_pinguim_000;
+                } else if (direcao_rad < 3*M_PI/8 && direcao_rad >= M_PI/8) {
+                    printf("DIRECAO: 045\n");
+                    textura_atual = textura_pinguim_045;
+                } else if (direcao_rad < M_PI/8 && direcao_rad >= -M_PI/8) {
+                    printf("DIRECAO: 090\n");
+                    textura_atual = textura_pinguim_090;
+                } else if (direcao_rad < -M_PI/8 && direcao_rad >= -3*M_PI/8) {
+                    printf("DIRECAO: 135\n");
+                    textura_atual = textura_pinguim_135;
+                } else if (direcao_rad < -3*M_PI/8 && direcao_rad >= -5*M_PI/8) {
+                    printf("DIRECAO: 180\n");
+                    textura_atual = textura_pinguim_180;
+                } else if (direcao_rad < -5*M_PI/8 && direcao_rad >= -7*M_PI/8) {
+                    printf("DIRECAO: 225\n");
+                    textura_atual = textura_pinguim_225;
+                } else if (direcao_rad < -7*M_PI/8 || direcao_rad >= 7*M_PI/8) {
+                    printf("DIRECAO: 270\n");
+                    textura_atual = textura_pinguim_270;
+                } else if (direcao_rad < 7*M_PI/8 && direcao_rad >= 5*M_PI/8) {
+                    printf("DIRECAO: 315\n");
+                    textura_atual = textura_pinguim_315;
+                }
+                printf("textura_atual: %p\n", textura_atual);
+                if (distancia > 0) {
                     velocidade_x = (dx / distancia) * escalar_velocidade;
                     velocidade_y = (dy / distancia) * escalar_velocidade;
                 }

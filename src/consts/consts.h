@@ -26,5 +26,43 @@ typedef enum {
     STATE_SAIR
 } GameState;
 
+//CONSTANTES PERSONALIZACAO
+typedef enum {
+    AMARELO,
+    AVERMELHADO,
+    AZUL_FORTE,
+    AZUL_FRACO,
+    CIANO,
+    CINZA,
+    LARANJA,
+    MARROM,
+    PRETO,
+    ROSA_MEDIO,
+    ROXO,
+    VERDE_FORTE,
+    VERDE_MEDIO,
+    VERDE_VOMITO,
+    VERMELHO,
+    TOTAL 
+} Cor;
+
+const char *nomes_cores[TOTAL] = {
+    "amarelo",        
+    "rosa",           
+    "azul",           
+    "azul_claro",     
+    "ciano",          
+    "cinza",          
+    "laranja",        
+    "marrom",         
+    "preto",          
+    "rosa",           
+    "roxo",           
+    "verdeMusgo",     
+    "verdeEscuro",    
+    "verde",          
+    "vermelho"        
+};
+
 
 #endif

@@ -11,25 +11,6 @@
 // ---------------- ENUMS ----------------
 
 typedef enum {
-    AMARELO,
-    AVERMELHADO,
-    AZUL_FORTE,
-    AZUL_FRACO,
-    CIANO,
-    CINZA,
-    LARANJA,
-    MARROM,
-    PRETO,
-    ROSA_MEDIO,
-    ROXO,
-    VERDE_FORTE,
-    VERDE_MEDIO,
-    VERDE_VOMITO,
-    VERMELHO,
-    TOTAL 
-} Cor;
-
-typedef enum {
     BALAO1,
     BALAO2,
     CONTINUAR,
