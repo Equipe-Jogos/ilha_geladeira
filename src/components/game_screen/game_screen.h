@@ -8,6 +8,7 @@
 #include <math.h>
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/Aux_monitor.h"
+#include "../../utils/Aux_movimentacao.h"
 #include "../../consts/consts.h"
 #include "../personalizacao/personalizacao.h" 
 
@@ -21,24 +22,15 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     IMG_Init(IMG_INIT_PNG);
     SDL_Texture *centroIMG = IMG_LoadTexture(renderizador, "imgs/centro.png");
 
+    
+    SDL_Texture *textura_pinguim[TOTAL_DIRECOES];
+    SDL_Texture *textura_atual;
 
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "000");
-    SDL_Texture *textura_pinguim_000 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "045");
-    SDL_Texture *textura_pinguim_045 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "090");
-    SDL_Texture *textura_pinguim_090 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "135");
-    SDL_Texture *textura_pinguim_135 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "180");
-    SDL_Texture *textura_pinguim_180 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "225");
-    SDL_Texture *textura_pinguim_225 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "270");
-    SDL_Texture *textura_pinguim_270 = IMG_LoadTexture(renderizador, caminho);
-    sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], "315");
-    SDL_Texture *textura_pinguim_315 = IMG_LoadTexture(renderizador, caminho);
-    SDL_Texture *textura_atual = textura_pinguim_000;
+    for (int i = 0; i < TOTAL_DIRECOES; i++) {
+        sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], nomes_direcoes[i]);
+        textura_pinguim[i] = IMG_LoadTexture(renderizador, caminho);
+    }
+    textura_atual = textura_pinguim[SUL];
   
     
     SDL_Rect pinguimRect = {LARGURA/2, ALTURA/2, 100, 160};
@@ -51,26 +43,18 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
 
     while (true) {
         if (distancia > 0.5f) {
-            // Atualiza posição usando variáveis float
-            pinguim_x += velocidade_x;
-            pinguim_y += velocidade_y;
-            
-            // Recalcula distância após movimento
-            dx = destino_x - pinguim_x;
-            dy = destino_y - pinguim_y;
-            float nova_distancia = sqrt(dx*dx + dy*dy);
-            
-            // Se chegou perto o suficiente ou passou do destino, para no destino exato
-            if (nova_distancia < 0.5f || nova_distancia >= distancia) {
-                pinguim_x = destino_x;
-                pinguim_y = destino_y;
-                velocidade_x = 0;
-                velocidade_y = 0;
-            }
-            
-            // Converte para int ao atribuir ao SDL_Rect
-            pinguimRect.x = (int)roundf(pinguim_x);
-            pinguimRect.y = (int)roundf(pinguim_y);
+            Coordenada nova_posicao = AtualizaPosicao(
+                &pinguim_x, 
+                &pinguim_y, 
+                destino_x, 
+                destino_y, 
+                &velocidade_x, 
+                &velocidade_y, 
+                &distancia
+            );
+
+            pinguimRect.x = nova_posicao.x;
+            pinguimRect.y = nova_posicao.y;
         }
 
         SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
@@ -96,33 +80,20 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
                 destino_x = (float)evento->button.x - (pinguimRect.w/2);
                 destino_y = (float)evento->button.y - (2*pinguimRect.h/3);
 
-                //calcula distancia entre pinguim e destino e velocidade do pinguim
-                dx = destino_x - pinguim_x;
-                dy = destino_y - pinguim_y;
-                distancia =  sqrt(dx*dx + dy*dy);
-                direcao_rad = atan2(dy, dx);
+                IniciaMovimentacao(
+                    &pinguim_x, 
+                    &pinguim_y, 
+                    destino_x, 
+                    destino_y, 
+                    &distancia,
+                    &direcao_rad,
+                    &velocidade_x, 
+                    &velocidade_y,
+                    escalar_velocidade
+                );
+                int direcao = DefineDirecaoCardinal(direcao_rad);
 
-                if (direcao_rad < 5*M_PI/8 && direcao_rad >= 3*M_PI/8) {
-                    textura_atual = textura_pinguim_000;
-                } else if (direcao_rad < 3*M_PI/8 && direcao_rad >= M_PI/8) {
-                    textura_atual = textura_pinguim_045;
-                } else if (direcao_rad < M_PI/8 && direcao_rad >= -M_PI/8) {
-                    textura_atual = textura_pinguim_090;
-                } else if (direcao_rad < -M_PI/8 && direcao_rad >= -3*M_PI/8) {
-                    textura_atual = textura_pinguim_135;
-                } else if (direcao_rad < -3*M_PI/8 && direcao_rad >= -5*M_PI/8) {
-                    textura_atual = textura_pinguim_180;
-                } else if (direcao_rad < -5*M_PI/8 && direcao_rad >= -7*M_PI/8) {
-                    textura_atual = textura_pinguim_225;
-                } else if (direcao_rad < -7*M_PI/8 || direcao_rad >= 7*M_PI/8) {
-                    textura_atual = textura_pinguim_270;
-                } else if (direcao_rad < 7*M_PI/8 && direcao_rad >= 5*M_PI/8) {
-                    textura_atual = textura_pinguim_315;
-                }
-                if (distancia > 0) {
-                    velocidade_x = (dx / distancia) * escalar_velocidade;
-                    velocidade_y = (dy / distancia) * escalar_velocidade;
-                }
+                textura_atual = textura_pinguim[direcao];
             }
         }
 

@@ -64,5 +64,33 @@ const char *nomes_cores[TOTAL] = {
     "vermelho"        
 };
 
+//CONSTANTES DIREÇÃO
+typedef struct {
+    int x;
+    int y;
+} Coordenada;
+
+typedef enum {
+    SUL,
+    SUDESTE,
+    LESTE,
+    NORDESTE,
+    NORTE,
+    NOROESTE,
+    OESTE,
+    SUDOESTE,
+    TOTAL_DIRECOES
+} Direcao;
+
+const char *nomes_direcoes[8] = {
+    "000",
+    "045",
+    "090",
+    "135",
+    "180",
+    "225",
+    "270",
+    "315",
+};
 
 #endif
