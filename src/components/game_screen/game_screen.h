@@ -35,19 +35,30 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     
     SDL_Rect pinguimRect = {LARGURA/2, ALTURA/2, 100, 160};
     SDL_Rect centroRect = {0, 0, LARGURA, ALTURA};
+    SDL_Rect sled_racing = {(LARGURA/5)-150, (ALTURA/2)-75, 300, 150};
 
     float escalar_velocidade = 1, velocidade_x = 0, velocidade_y = 0;
-    float pinguim_x = (LARGURA/2.0f), pinguim_y = (ALTURA/2.0f);
-    float destino_x = pinguim_x, destino_y = pinguim_y;
+    SDL_Point_Float pinguim_posicao = {(LARGURA/2.0f), (ALTURA/2.0f)};
+    SDL_Point_Float destino = {(LARGURA/2.0f), (ALTURA/2.0f)};
     float distancia = 0, direcao_rad = 0, dx = 0, dy = 0;
 
     while (true) {
+        if (
+            SDL_PointInRect(
+                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
+                &sled_racing
+            )
+        ) {
+            *estadoJogo = STATE_SLED_RACING;
+            return 1;
+        }    
+
         if (distancia > 0.5f) {
-            Coordenada nova_posicao = AtualizaPosicao(
-                &pinguim_x, 
-                &pinguim_y, 
-                destino_x, 
-                destino_y, 
+            SDL_Point nova_posicao = AtualizaPosicao(
+                &pinguim_posicao.x, 
+                &pinguim_posicao.y, 
+                destino.x, 
+                destino.y, 
                 &velocidade_x, 
                 &velocidade_y, 
                 &distancia
@@ -60,6 +71,9 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, centroIMG, NULL, &centroRect);
+
+        SDL_SetRenderDrawColor(renderizador, 255, 0, 0, 255);
+        SDL_RenderFillRect(renderizador, &sled_racing);
         SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
 
         if (AUX_WaitEventTimeout(evento, timeout)) {
@@ -77,14 +91,14 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
                 return 0;
             } else if(evento->type == SDL_MOUSEBUTTONDOWN) {
                 //define destino do pinguim
-                destino_x = (float)evento->button.x - (pinguimRect.w/2);
-                destino_y = (float)evento->button.y - (2*pinguimRect.h/3);
+                destino.x = (float)evento->button.x - (pinguimRect.w/2);
+                destino.y = (float)evento->button.y - (2*pinguimRect.h/3);
 
                 IniciaMovimentacao(
-                    &pinguim_x, 
-                    &pinguim_y, 
-                    destino_x, 
-                    destino_y, 
+                    &pinguim_posicao.x, 
+                    &pinguim_posicao.y, 
+                    destino.x, 
+                    destino.y, 
                     &distancia,
                     &direcao_rad,
                     &velocidade_x, 

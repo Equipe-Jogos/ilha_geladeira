@@ -66,6 +66,11 @@ const char *nomes_cores[TOTAL] = {
 };
 
 //CONSTANTES DIREÇÃO
+typedef struct {
+    float x;
+    float y;
+} SDL_Point_Float;
+
 typedef enum {
     SUL,
     SUDESTE,

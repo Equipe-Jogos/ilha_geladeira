@@ -50,7 +50,7 @@ static inline SDL_Point AtualizaPosicao(
         *distancia = 0;
     }
         
-    Coordenada p = { (int)roundf(*origem_x), (int)roundf(*origem_y) };
+    SDL_Point p = { (int)roundf(*origem_x), (int)roundf(*origem_y) };
     return p;
 }
 

@@ -67,7 +67,10 @@ int main(int args, char* argc[]) {
             
             case STATE_JOGANDO:
                 RenderGameScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
-                //RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+                break;
+
+            case STATE_SLED_RACING:
+                RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
 	      	break;
 
             case STATE_SAIR:
