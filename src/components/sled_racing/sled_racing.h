@@ -142,6 +142,17 @@ static inline int RenderSledRacingScreen(SDL_Window *janela, SDL_Renderer *rende
             SDL_RenderCopy(renderizador, pista[i].textura, NULL, &pista[i].rec);
         }
 
+        if (AUX_WaitEventTimeout(evento, timeout)) {
+            if (evento->type == SDL_KEYDOWN) {
+                if (evento->key.keysym.sym == SDLK_ESCAPE) {
+                    *estadoJogo = STATE_JOGANDO;
+
+                    IMG_Quit();
+                    return 1;
+                }
+            }
+        }
+
         SDL_RenderPresent(renderizador);
     }
 
