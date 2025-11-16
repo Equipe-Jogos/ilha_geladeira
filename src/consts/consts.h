@@ -22,6 +22,7 @@ typedef enum {
     STATE_LOADING,
     STATE_MENU,
     STATE_JOGANDO,
+    STATE_SLED_RACING,
     STATE_PERSONALIZACAO,
     STATE_SAIR
 } GameState;
@@ -65,11 +66,6 @@ const char *nomes_cores[TOTAL] = {
 };
 
 //CONSTANTES DIREÇÃO
-typedef struct {
-    int x;
-    int y;
-} Coordenada;
-
 typedef enum {
     SUL,
     SUDESTE,

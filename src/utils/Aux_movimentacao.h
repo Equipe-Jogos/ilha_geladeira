@@ -23,7 +23,7 @@ static inline void IniciaMovimentacao(
     }
 }
 
-static inline Coordenada AtualizaPosicao(
+static inline SDL_Point AtualizaPosicao(
     float *origem_x, 
     float *origem_y, 
     float destino_x, 
