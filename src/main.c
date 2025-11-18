@@ -5,6 +5,7 @@
 #include "./components/menu/menu.h"
 #include "./components/personalizacao/personalizacao.h"
 #include "./components/sled_racing/sled_racing.h"
+#include "./components/minigames/pega_puffle.h"
 #include "./components/game_screen/game_screen.h"
 
 
@@ -72,6 +73,10 @@ int main(int args, char* argc[]) {
             case STATE_SLED_RACING:
                 RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
 	      	break;
+
+            case STATE_PEGA_PUFFLE:
+                RenderPegaPuffleScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+                break;
 
             case STATE_SAIR:
                 rodando = false;

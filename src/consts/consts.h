@@ -21,9 +21,10 @@ bool rodando = true;
 typedef enum {
     STATE_LOADING,
     STATE_MENU,
+    STATE_PERSONALIZACAO,
     STATE_JOGANDO,
     STATE_SLED_RACING,
-    STATE_PERSONALIZACAO,
+    STATE_PEGA_PUFFLE,
     STATE_SAIR
 } GameState;
 

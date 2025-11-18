@@ -35,7 +35,7 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     
     SDL_Rect pinguimRect = {LARGURA/2, ALTURA/2, 100, 160};
     SDL_Rect centroRect = {0, 0, LARGURA, ALTURA};
-    SDL_Rect sled_racing = {(LARGURA/5)-150, (ALTURA/2)-75, 300, 150};
+    SDL_Rect sled_racing = {(LARGURA/5)-150, (ALTURA/2)-75, 300, 150}, pega_puffle = {(LARGURA/2)-150, (4*ALTURA/5)-75, 300, 150};
 
     float escalar_velocidade = 1, velocidade_x = 0, velocidade_y = 0;
     SDL_Point_Float pinguim_posicao = {(LARGURA/2.0f), (ALTURA/2.0f)};
@@ -52,6 +52,16 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
             *estadoJogo = STATE_SLED_RACING;
             return 1;
         }    
+
+        if (
+            SDL_PointInRect(
+                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
+                &pega_puffle
+            )
+        ) {
+            *estadoJogo = STATE_PEGA_PUFFLE;
+            return 1;
+        }
 
         if (distancia > 0.5f) {
             SDL_Point nova_posicao = AtualizaPosicao(
@@ -72,8 +82,10 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, centroIMG, NULL, &centroRect);
 
-        SDL_SetRenderDrawColor(renderizador, 255, 0, 0, 255);
+        SDL_SetRenderDrawColor(renderizador, 255, 0, 0, 100);
         SDL_RenderFillRect(renderizador, &sled_racing);
+        SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 100);
+        SDL_RenderFillRect(renderizador, &pega_puffle);
         SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
 
         if (AUX_WaitEventTimeout(evento, timeout)) {
