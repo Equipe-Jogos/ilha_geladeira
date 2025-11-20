@@ -49,7 +49,7 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
                 &sled_racing
             )
         ) {
-            *estadoJogo = STATE_SLED_RACING;
+            *estadoJogo = STATE_BEANS_COUNTERS;
             return 1;
         }    
 

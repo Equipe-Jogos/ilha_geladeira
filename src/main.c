@@ -7,6 +7,7 @@
 #include "./components/sled_racing/sled_racing.h"
 #include "./components/minigames/pega_puffle.h"
 #include "./components/game_screen/game_screen.h"
+#include "./components/Bean Counters/bean_counters.h"
 
 
 int main(int args, char* argc[]) {
@@ -70,8 +71,8 @@ int main(int args, char* argc[]) {
                 RenderGameScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
                 break;
 
-            case STATE_SLED_RACING:
-                RenderSledRacingScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+            case STATE_BEANS_COUNTERS:
+               RenderBeanCountersScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
 	      	break;
 
             case STATE_PEGA_PUFFLE:

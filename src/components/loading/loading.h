@@ -23,9 +23,14 @@ static inline int RenderLoadingScreen(
     SDL_Rect img_capa = {0, 0, LARGURA, ALTURA};
     SDL_Rect carregamento = {0, 0, 1, 20};
     bool carregando = true;
-    int velocidade = LARGURA / 1000;
+    int velocidade = LARGURA / 100;
 
     while (carregando) {
+
+        if (AUX_WaitEventTimeout(evento, timeout))
+        {
+
+        }
 
         if (carregamento.w < LARGURA) {
             SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
