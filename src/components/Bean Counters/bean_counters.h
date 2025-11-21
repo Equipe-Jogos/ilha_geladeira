@@ -10,6 +10,7 @@
 #include "../../utils/Aux_monitor.h"
 #include "../personalizacao/personalizacao.h"
 
+
 //Dimensões da Tela
 int LARGURA, ALTURA;
 
@@ -44,7 +45,7 @@ typedef enum
 } Estados_pinguim_carga;
 
 // Tipos de carga
-enum
+typedef enum
 {
     GRAOS,
     PEIXE,
@@ -68,6 +69,7 @@ typedef struct
     double velocidade_x;
     double velocidade_y;
     Uint32 tempo_anterior_carga;
+    bool ativo;
 
 } Carga;
 
@@ -90,26 +92,44 @@ typedef struct
     Estados_pinguim_movimento estado_movimento;
     double velocidade;
     double posx;
+    int incremento;
+    int destino;
+    Uint32 now;
+    Uint32 last;
+    int sacos;
+
+    SDL_Texture ** texturas;
 
 } Pinguim;
 
 void inicializa_pinguim(SDL_Renderer * renderizador, Pinguim * pinguim)
 {
     int comprimento_andavel = limite_dir - limite_esq;
-    int posicao_inicial = limite_esq + comprimento_andavel / 2 - 150;
-    pinguim->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin.webp");
+    int posicao_inicial = limite_esq + comprimento_andavel / 2;
+    
     pinguim->rect = (SDL_Rect){ posicao_inicial, ALTURA - 200, 150, 150 };
     pinguim->estado_movimento = PARADO;
     pinguim->estado_carga = NAO_CARREGA;
-    pinguim->velocidade;
-    pinguim->posx = 0;
+    pinguim->velocidade = 0;
+    pinguim->posx = pinguim->rect.x;
+    pinguim->destino = pinguim->posx;
+    pinguim->incremento = 0;
+    pinguim->last = SDL_GetTicks();
+    pinguim->sacos = 0;
+
+    pinguim->texturas = malloc(7*sizeof(SDL_Texture *));
+    pinguim->texturas[0] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin0.webp");
+    pinguim->texturas[1] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin1.webp");
+    pinguim->texturas[2] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin2.webp");
+    pinguim->texturas[3] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin3.webp");
+    pinguim->texturas[4] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin4.webp");
+    pinguim->texturas[5] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin5.webp");
+    pinguim->texturas[6] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin6.webp");
+
+    pinguim->txt = pinguim->texturas[0];
 
 }
 
-void atualiza_estado_pinguim()
-{
-
-}
 
 void inicializa_vetor_carga(Vetor_carga * vetor,int tam)
 {
@@ -120,7 +140,7 @@ void inicializa_vetor_carga(Vetor_carga * vetor,int tam)
 
 void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
 {
-    carga->rect = (SDL_Rect){ LARGURA * 0.8, ALTURA - 400, 70, 60 };
+    carga->rect = (SDL_Rect){ LARGURA * 0.85, ALTURA - 400, 70, 60 };
     carga->pos_x = carga->rect.x;
     carga->pos_y = carga->rect.y;
     carga->velocidade_x = -200;
@@ -141,7 +161,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
     // 🔥 FÓRMULA CORRETA DE VELOCIDADE INICIAL PARA ALCANÇAR Y EM T TEMPO
     carga->velocidade_y = (2 * dy - gravidade * tempo * tempo) / (2 * tempo);
 
-    carga->tipo = rand()%4;
+    carga->tipo = (Enum_carga)rand()%4;
     
     switch (carga->tipo)
     {
@@ -161,7 +181,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
             break;
     }
 
-
+    carga->ativo = true;
 
     //printf("%f,%d, %f, %f\n", space_x, carga->rect.x, tempo, carga->velocidade_y);
 }
@@ -174,7 +194,7 @@ void sorteia_carga(SDL_Renderer *renderizador, Vetor_carga * vetor)
     {
         if (vetor->prob == 13)
         {
-            printf("%d\n",vetor->ultimo_index);
+            //printf("%d\n",vetor->ultimo_index);
             inicializa_carga(renderizador,&vetor->cargas[++vetor->ultimo_index]);
         }
     }
@@ -237,11 +257,7 @@ static inline int RenderBeanCountersScreen(
 
     SDL_Point inicial_mouse;
     SDL_Point atual_mouse;
-
-    int estado_movimento = PARADO;
-    double velocidade = 0.0;
-
-    Uint32 last = SDL_GetTicks();   // <- Pinguim usa somente ESTE
+    
 
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
     SDL_GetMouseState(&inicial_mouse.x, &inicial_mouse.y);
@@ -249,20 +265,14 @@ static inline int RenderBeanCountersScreen(
     limite_esq = LARGURA * 0.25;
     limite_dir = LARGURA * 0.75;
 
-    int comprimento_andavel = limite_dir - limite_esq;
-    int posicao_inicial = limite_esq + comprimento_andavel / 2;
-
-    int incremento = 0;
-    int destino = posicao_inicial;
-
     IMG_Init(IMG_INIT_PNG);
 
     // Pinguim
-    SDL_Rect pinguim = { posicao_inicial, ALTURA - 100, 30, 30 };
-    Pinguim p2;
-    inicializa_pinguim(renderizador, &p2);
+    Pinguim pinguim;
+    inicializa_pinguim(renderizador, &pinguim);
 
     // Caminhão
+    SDL_Texture * caminhao_txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/trucker.png");
     SDL_Rect caminhao = { LARGURA * 0.80, ALTURA - 600, 300, 500 };
 
     // CARGA
@@ -273,7 +283,6 @@ static inline int RenderBeanCountersScreen(
     SDL_Point dir = { limite_dir, ALTURA - 100 };
 
     // POSIÇÃO EM DOUBLE PARA PINGUIM
-    double pos_x = pinguim.x;
 
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -309,20 +318,20 @@ static inline int RenderBeanCountersScreen(
 
                 if (inicial_mouse.x != atual_mouse.x)
                 {
-                    incremento = atual_mouse.x - inicial_mouse.x;
+                    pinguim.incremento = atual_mouse.x - inicial_mouse.x;
                     int destino_aux;
 
-                    if (estado_movimento == PARADO)
-                        destino_aux = (int)pos_x + incremento;
+                    if (pinguim.estado_movimento == PARADO)
+                        destino_aux = (int)pinguim.posx + pinguim.incremento;
                     else
-                        destino_aux = (int)destino + incremento;
+                        destino_aux = (int)pinguim.destino + pinguim.incremento;
 
-                    if (destino_aux + pinguim.w < limite_dir && destino_aux > limite_esq)
+                    if (destino_aux + pinguim.rect.w < limite_dir && destino_aux > limite_esq)
                     {
-                        destino = destino_aux;
-                        estado_movimento = MOVENDO;
+                        pinguim.destino = destino_aux;
+                        pinguim.estado_movimento = MOVENDO;
 
-                        velocidade = (destino > pos_x) ? 200.0 : -200.0;
+                        pinguim.velocidade = (pinguim.destino > pinguim.posx) ? 800.0 : -800.0;
                     }
                 }
 
@@ -338,52 +347,72 @@ static inline int RenderBeanCountersScreen(
         calcula_movimento_cargas(&cargas_jogadas);
        
 
-
-
         // ============================
         //    MOVIMENTO DO PINGUIM
         // ============================
-        Uint32 agora = SDL_GetTicks();
-        double dt = (agora - last) / 1000.0;
+        pinguim.now = SDL_GetTicks();
+        double dt = (pinguim.now - pinguim.last) / 1000.0;
 
-        if (estado_movimento == MOVENDO)
+        if (pinguim.estado_movimento == MOVENDO)
         {
-            pos_x += velocidade * dt;
+            pinguim.posx += pinguim.velocidade * dt;
 
-            if ((velocidade > 0 && pos_x >= destino) ||
-                (velocidade < 0 && pos_x <= destino))
+            if ((pinguim.velocidade > 0 && pinguim.posx >= pinguim.destino) ||
+                (pinguim.velocidade < 0 && pinguim.posx <= pinguim.destino))
             {
-                pos_x = destino;
-                estado_movimento = PARADO;
+                pinguim.posx = pinguim.destino;
+                pinguim.estado_movimento = PARADO;
             }
 
-            pinguim.x = (int)pos_x;
+            pinguim.rect.x = (int)pinguim.posx;
         }
 
-        last = agora;
+        pinguim.last = pinguim.now;
+
+        for(int i = 0; i <= cargas_jogadas.ultimo_index; i++)
+        {
+            if (cargas_jogadas.cargas[i].ativo == true)
+            {
+                if (SDL_HasIntersection(&pinguim.rect, &cargas_jogadas.cargas[i].rect))
+                {
+                    cargas_jogadas.cargas[i].ativo = false;
+
+                    if (cargas_jogadas.cargas[i].tipo == PEIXE)
+                    {
+
+                    }
+                    else if (cargas_jogadas.cargas[i].tipo == VASO)
+                    {
+                        
+                    }
+                    else if (cargas_jogadas.cargas[i].tipo == BIGORNA)
+                    {
+                        
+                    }
+                    else  if (cargas_jogadas.cargas[i].tipo == GRAOS)
+                    {
+                        pinguim.sacos +=1;
+                        if (pinguim.sacos <=6)
+                        {
+                            pinguim.txt = pinguim.texturas[pinguim.sacos];
+                        }
+                    }
+                }
+
+            }
+            
+        }
 
 
         // ============================
         //        DESENHO
         // ============================
-        SDL_Rect destino_rect = { destino, ALTURA - 100, 10, 10 };
 
-        SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 255);
         draw_cargas(renderizador, &cargas_jogadas);
 
-        SDL_SetRenderDrawColor(renderizador, 0, 255, 255, 255);
-        SDL_RenderFillRect(renderizador, &pinguim);
+        SDL_RenderCopy(renderizador, caminhao_txt, NULL, &caminhao);
 
-        SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 255);
-        SDL_RenderFillRect(renderizador, &destino_rect);
-
-        SDL_SetRenderDrawColor(renderizador, 255, 255, 0, 255);
-        SDL_RenderFillRect(renderizador, &caminhao);
-
-        SDL_RenderDrawPoint(renderizador, esq.x, esq.y);
-        SDL_RenderDrawPoint(renderizador, dir.x, dir.y);
-
-         SDL_RenderCopy(renderizador, p2.txt, NULL, &p2.rect);
+         SDL_RenderCopy(renderizador, pinguim.txt, NULL, &pinguim.rect);
 
         SDL_RenderPresent(renderizador);
     }
