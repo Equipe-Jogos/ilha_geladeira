@@ -466,7 +466,7 @@ static inline int RenderBeanCountersScreen(
                         if (pinguim.sacos <6)
                         {
                             pinguim.sacos +=1;
-                            //pinguim.porcentagem_peso -= 0.10;
+                            pinguim.porcentagem_peso -= 0.10;
                             pinguim.estado_carga = (Estados_pinguim_carga)pinguim.sacos;
                             pinguim.txt = pinguim.texturas[pinguim.sacos];
 
@@ -481,7 +481,7 @@ static inline int RenderBeanCountersScreen(
                 pinguim.ultima_entrega = SDL_GetTicks();
                 pinguim.sacos--;
                 pinguim.txt = pinguim.texturas[pinguim.sacos];
-                //pinguim.porcentagem_peso +=0.10;
+                pinguim.porcentagem_peso +=0.10;
                 if(!pilha_cheia(&pilha_1))
                 {
                     push(renderizador,&pilha_1);
