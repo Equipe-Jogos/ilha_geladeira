@@ -384,15 +384,17 @@ static inline int RenderBeanCountersScreen(
             {
                 SDL_GetMouseState(&atual_mouse.x, &atual_mouse.y);
 
-                if (inicial_mouse.x != atual_mouse.x)
+                int dx =  evento->motion.xrel;
+
+                if (dx != 0)
                 {
-                    pinguim.incremento = atual_mouse.x - inicial_mouse.x;
+                    pinguim.incremento = dx;
                     int destino_aux;
 
                     if (pinguim.estado_movimento == PARADO)
                         destino_aux = (int)pinguim.posx + pinguim.incremento;
                     else
-                        destino_aux = (int)pinguim.destino + pinguim.incremento;
+                        destino_aux = (int)pinguim.posx + pinguim.incremento;
 
                     if (destino_aux + pinguim.rect.w < limite_dir && destino_aux > limite_esq)
                     {
