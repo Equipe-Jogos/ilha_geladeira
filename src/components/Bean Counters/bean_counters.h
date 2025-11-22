@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <time.h>
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/Aux_monitor.h"
@@ -352,6 +353,27 @@ static inline int RenderBeanCountersScreen(
     pilha_2.pos_y = ALTURA*0.80;
 
 
+   TTF_Init();
+   TTF_Font* fnt = TTF_OpenFont("fonts/Lovelo/lovelo_black.otf", 50);
+   assert(fnt != NULL);
+   SDL_Color clr = {0xFF,0xFF,0xFF,0xFF};
+
+   SDL_Surface* sfc_life = TTF_RenderText_Blended(fnt,  "LIFE:  ", clr);
+   assert(sfc_life != NULL);
+   SDL_Texture* txt_life = SDL_CreateTextureFromSurface(renderizador, sfc_life);
+   assert(txt_life != NULL);
+   SDL_FreeSurface(sfc_life);
+
+   SDL_Surface* sfc_score = TTF_RenderText_Blended(fnt, "SCORE: ", clr);
+   assert(sfc_score != NULL);
+   SDL_Texture* txt_score = SDL_CreateTextureFromSurface(renderizador, sfc_score);
+   assert(txt_score != NULL);
+   SDL_FreeSurface(sfc_score);
+
+   SDL_Rect life = {LARGURA*0.07,ALTURA*0.025,LARGURA*0.05,ALTURA*0.04};
+   SDL_Rect score = {LARGURA*0.15,ALTURA*0.025,LARGURA*0.05,ALTURA*0.04};
+
+
     SDL_ShowCursor(SDL_DISABLE);
 
     while (true)
@@ -511,8 +533,10 @@ static inline int RenderBeanCountersScreen(
 
         SDL_RenderCopy(renderizador, pinguim.txt, NULL, &pinguim.rect);
 
-         SDL_RenderCopy(renderizador, txt_neve, NULL, &neve);
+        SDL_RenderCopy(renderizador, txt_neve, NULL, &neve);
 
+        SDL_RenderCopy(renderizador, txt_life, NULL, &life);
+        SDL_RenderCopy(renderizador, txt_score, NULL, &score);
 
         SDL_RenderPresent(renderizador);
     }
