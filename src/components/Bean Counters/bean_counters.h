@@ -71,6 +71,10 @@ typedef struct
     double velocidade_y;
     Uint32 tempo_anterior_carga;
     bool ativo;
+    int tempo;
+    SDL_Rect teste;
+    int destino;
+    int pos_inicial;    
 
 } Carga;
 
@@ -81,7 +85,6 @@ typedef struct
     int tamanho;
     int ultimo_index;
     int prob;
-
 
 } Vetor_carga;
 
@@ -108,6 +111,7 @@ typedef struct
     bool atingido;
     Uint32 momento_queda;
     int posicao_inicial;
+   
 
 } Pinguim;
 
@@ -125,7 +129,7 @@ void inicializa_pinguim(SDL_Renderer * renderizador, Pinguim * pinguim)
     pinguim->rect = (SDL_Rect){ pinguim->posicao_inicial, ALTURA*0.72, LARGURA*0.12, LARGURA*0.12};
     pinguim->estado_movimento = PARADO;
     pinguim->estado_carga = NAO_CARREGA;
-    pinguim->velocidade_inicial = 5000;
+    pinguim->velocidade_inicial = LARGURA/100;
     pinguim->velocidade = 0;
     pinguim->posx = pinguim->rect.x;
     pinguim->destino = pinguim->posx;
@@ -166,23 +170,24 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
     carga->rect = (SDL_Rect){ LARGURA * 0.85, ALTURA*0.52, LARGURA*0.07, LARGURA*0.07 };
     carga->pos_x = carga->rect.x;
     carga->pos_y = carga->rect.y;
-    carga->velocidade_x = -LARGURA/8;
     carga->tempo_anterior_carga = 0;
 
     double space_x = limite_esq + rand() % (limite_dir - limite_esq + 1);
-    double space_y = ALTURA*0.13;
+    carga->pos_inicial = carga->pos_y;
+    carga->destino = (int)ALTURA*0.72;
+    double space_y = ALTURA * 0.13;
 
-    double tempo = (space_x - carga->rect.x) / carga->velocidade_x;
-
-    if (tempo <= 0.01) {
-        printf("Movimento impossível! tempo=%f\n", tempo);
-        return;
-    }
-
+    double dx = space_x - LARGURA * 0.85;
     double dy = space_y - carga->pos_y;
 
-    // 🔥 FÓRMULA CORRETA DE VELOCIDADE INICIAL PARA ALCANÇAR Y EM T TEMPO
-    carga->velocidade_y = (2 * dy - gravidade * tempo * tempo) / (2 * tempo);
+    // 1) escolha uma velocidade horizontal fixa (boa para não sair da tela)
+    carga->velocidade_x = -300;   // você pode ajustar depois
+
+    // 2) tempo necessário para atingir o X
+    carga->tempo = fabs(dx) / fabs(carga->velocidade_x);
+
+    // 3) velocidade Y correta para atingir o destino Y no mesmo tempo
+    carga->velocidade_y = (dy - 0.5 * gravidade * carga->tempo * carga->tempo) / carga->tempo;
 
     carga->tipo = (Enum_carga)rand()%4;
     
@@ -204,6 +209,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
             break;
     }
 
+    carga->teste = (SDL_Rect){space_x,200,10,10};
     carga->ativo = true;
 }
 
@@ -224,7 +230,38 @@ void draw_cargas(SDL_Renderer * renderizador,Vetor_carga * vetor)
 {
         for (int i = 0; i <= vetor->ultimo_index; i++)
         {
-            SDL_RenderCopy(renderizador, vetor->cargas[i].txt, NULL, &vetor->cargas[i].rect);
+            Carga carga = vetor->cargas[i]; 
+            if (carga.ativo)
+            {
+                if(carga.tipo == GRAOS)
+                {
+                    double angulo;
+                    double porc = ((abs(carga.rect.y-carga.pos_inicial)) /(carga.destino-carga.pos_inicial));
+
+                    if (porc <= 0.25)
+                    {
+                        angulo = 0;
+                    }
+                    else if (porc <=0.50)
+                    {
+                        angulo = 45;
+                    }
+                    else if (porc <= 0.75)
+                    {
+                        angulo = 90;
+                    }
+                    else 
+                    {
+                        angulo = 180;
+                    }
+                    
+                    SDL_RenderCopyEx(renderizador, carga.txt, NULL, &carga.rect, angulo, NULL, SDL_FLIP_NONE);
+                }
+                else
+                {
+                    SDL_RenderCopy(renderizador, carga.txt,NULL, &carga.rect);
+                }
+            }
         }
 }
 
@@ -265,6 +302,42 @@ void draw_pilha(SDL_Renderer * renderizador,Pilha * p)
     for (int i =0; i<=p->topo; i++)
     {
         SDL_RenderCopy(renderizador, p->data[i].txt, NULL, &p->data[i].rect);
+    }
+}
+
+void calcula_movimento_pinguim(Pinguim *pinguim)
+{
+    if (pinguim->atingido)
+        return;
+
+    const Uint8* teclas = SDL_GetKeyboardState(NULL);
+
+    // MOVER ESQUERDA
+    if (teclas[SDL_SCANCODE_LEFT])
+    {
+        int destino_aux = (int)pinguim->rect.x - 
+                          (pinguim->velocidade_inicial * pinguim->porcentagem_peso);
+
+        if (destino_aux > limite_esq)
+        {
+            pinguim->destino = destino_aux;
+            pinguim->estado_movimento = MOVENDO;
+            pinguim->rect.x = pinguim->destino;
+        }
+    }
+
+    // MOVER DIREITA
+    if (teclas[SDL_SCANCODE_RIGHT])
+    {
+        int destino_aux = (int)pinguim->rect.x + 
+                          (pinguim->velocidade_inicial * pinguim->porcentagem_peso);
+
+        if (destino_aux + pinguim->rect.w < limite_dir)
+        {
+            pinguim->destino = destino_aux;
+            pinguim->estado_movimento = MOVENDO;
+            pinguim->rect.x = pinguim->destino;
+        }
     }
 }
 
@@ -420,21 +493,7 @@ static inline int RenderBeanCountersScreen(
                 IMG_Quit();
                 return 0;
             }
-
-            if (evento->type == SDL_MOUSEMOTION && !pinguim.atingido)
-            {
-                SDL_GetMouseState(&atual_mouse.x, &atual_mouse.y);
-
-                // novo destino baseado diretamente na posição do mouse
-                int destino_aux = atual_mouse.x - (pinguim.rect.w / 2);
-
-                if (destino_aux + pinguim.rect.w < limite_dir && destino_aux > limite_esq)
-                {
-                    pinguim.destino = destino_aux;
-                    pinguim.estado_movimento = MOVENDO;
-                }
-            }
-
+            
         }
 
         // ============================
@@ -444,38 +503,12 @@ static inline int RenderBeanCountersScreen(
         if (!pinguim.atingido)
         {
             sorteia_carga(renderizador, &cargas_jogadas);
+            calcula_movimento_pinguim(&pinguim);
         }
         calcula_movimento_cargas(&cargas_jogadas);
        
-
-        // ============================
-        //    MOVIMENTO DO PINGUIM
-        // ============================
-
-        if(!pinguim.atingido)
+   if (!pinguim.atingido)
         {
-             pinguim.now = SDL_GetTicks();
-            double dt = (pinguim.now - pinguim.last) / 1000.0;
-            pinguim.last = pinguim.now;
-
-            if (pinguim.estado_movimento == MOVENDO)
-            {
-                // ---- INTERPOLAÇÃO SUAVE ----
-                // Quanto mais peso → menor porcentagem_peso → movimento mais lento
-                double suavizacao = 0.10 * pinguim.porcentagem_peso;
-
-                pinguim.posx += (pinguim.destino - pinguim.posx) * suavizacao;
-
-                // Atualiza posição do rect
-                pinguim.rect.x = (int)pinguim.posx;
-
-                // Se estiver muito perto, considera que chegou
-                if (fabs(pinguim.destino - pinguim.posx) < 0.5)
-                    pinguim.estado_movimento = PARADO;
-            }
-
-            pinguim.last = pinguim.now;
-
             for(int i = 0; i <= cargas_jogadas.ultimo_index; i++)
             {
                 if (cargas_jogadas.cargas[i].ativo == true)
@@ -491,6 +524,7 @@ static inline int RenderBeanCountersScreen(
                             pinguim.atingido = true;
                             pinguim.momento_queda = SDL_GetTicks();
                             pinguim.sacos = 0;
+                            pinguim.porcentagem_peso = 1;
                         }
                         else if (cargas_jogadas.cargas[i].tipo == VASO)
                         {
@@ -499,6 +533,7 @@ static inline int RenderBeanCountersScreen(
                             pinguim.atingido = true;
                             pinguim.momento_queda = SDL_GetTicks();
                             pinguim.sacos = 0;
+                            pinguim.porcentagem_peso = 1;
                         }
                         else if (cargas_jogadas.cargas[i].tipo == BIGORNA)
                         {
@@ -507,16 +542,19 @@ static inline int RenderBeanCountersScreen(
                             pinguim.atingido = true;
                             pinguim.momento_queda = SDL_GetTicks();
                             pinguim.sacos = 0;
+                            pinguim.porcentagem_peso = 1;
                         }
                         else  if (cargas_jogadas.cargas[i].tipo == GRAOS)
                         {
-                            if (pinguim.sacos <6)
+                            if (pinguim.sacos <5)
                             {
                                 pinguim.sacos +=1;
                                 pinguim.score +=8;
                                 pinguim.porcentagem_peso -= 0.10;
+                                pinguim.ultima_entrega = SDL_GetTicks();
                                 pinguim.estado_carga = (Estados_pinguim_carga)pinguim.sacos;
                                 pinguim.txt = pinguim.texturas[pinguim.sacos];
+                                cargas_jogadas.cargas[i].ativo = false;
 
                             }
                             else
@@ -548,7 +586,6 @@ static inline int RenderBeanCountersScreen(
                 }
             }   
         }
-
 
         // ============================
         //        DESENHO
