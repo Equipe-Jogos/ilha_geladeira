@@ -1,6 +1,21 @@
 #include <math.h>
 #include "../consts/consts.h"
 
+static inline void CalculaDistancia(
+    float origem_x,
+    float origem_y,
+    float destino_x,
+    float destino_y,
+    float *distancia,
+    float *direcao_rad
+) {
+    float dx = destino_x - origem_x;
+    float dy = destino_y - origem_y;
+
+    *distancia = sqrt(dx*dx + dy*dy);
+    *direcao_rad = atan2(dy, dx);
+}
+
 static inline void IniciaMovimentacao(
     float *origem_x, 
     float *origem_y, 
@@ -12,11 +27,15 @@ static inline void IniciaMovimentacao(
     float *velocidade_y,
     float escalar_velocidade
 ) {
-    float dx = destino_x - *origem_x;
-    float dy = destino_y - *origem_y;
-    *distancia = sqrt(dx*dx + dy*dy);
-    *direcao_rad = atan2(dy, dx);
-
+    CalculaDistancia(
+        *origem_x,
+        *origem_y,
+        destino_x,
+        destino_y,
+        distancia,
+        direcao_rad
+    );
+    
     if (*distancia > 0) {
         *velocidade_x = (dx / *distancia) * escalar_velocidade;
         *velocidade_y = (dy / *distancia) * escalar_velocidade;
