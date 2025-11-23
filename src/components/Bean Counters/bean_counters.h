@@ -103,20 +103,29 @@ typedef struct
     double porcentagem_peso;
     Uint32 ultima_entrega;
     int intervalo_entrega;
+    int score;
+    int vidas;
+    bool atingido;
+    Uint32 momento_queda;
+    int posicao_inicial;
 
 } Pinguim;
 
 void inicializa_pinguim(SDL_Renderer * renderizador, Pinguim * pinguim)
 {
     int comprimento_andavel = limite_dir - limite_esq;
-    int posicao_inicial = limite_esq + comprimento_andavel / 2;
+    pinguim->posicao_inicial = limite_esq + comprimento_andavel / 2;
     printf("%d\n",ALTURA);
     printf("%d\n",LARGURA);
+
+    pinguim->score = 0;
+    pinguim->vidas = 3;
+    pinguim->atingido = false;
     
-    pinguim->rect = (SDL_Rect){ posicao_inicial, ALTURA*0.72, LARGURA*0.12, LARGURA*0.12};
+    pinguim->rect = (SDL_Rect){ pinguim->posicao_inicial, ALTURA*0.72, LARGURA*0.12, LARGURA*0.12};
     pinguim->estado_movimento = PARADO;
     pinguim->estado_carga = NAO_CARREGA;
-    pinguim->velocidade_inicial = 1000;
+    pinguim->velocidade_inicial = 5000;
     pinguim->velocidade = 0;
     pinguim->posx = pinguim->rect.x;
     pinguim->destino = pinguim->posx;
@@ -381,6 +390,16 @@ static inline int RenderBeanCountersScreen(
         SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 255);
         SDL_RenderClear(renderizador);
 
+        if(pinguim.atingido && (SDL_GetTicks() - pinguim.momento_queda) >= 3000)
+        {
+            pinguim.atingido = false;
+            pinguim.rect.x = pinguim.posicao_inicial;
+            pinguim.destino = pinguim.posicao_inicial;
+            pinguim.incremento = 0;
+            pinguim.txt = pinguim.texturas[0];
+            pinguim.last = SDL_GetTicks();
+        }
+
         // =====================
         //    ENTRADAS
         // =====================
@@ -402,124 +421,151 @@ static inline int RenderBeanCountersScreen(
                 return 0;
             }
 
-            if (evento->type == SDL_MOUSEMOTION)
+            if (evento->type == SDL_MOUSEMOTION && !pinguim.atingido)
             {
                 SDL_GetMouseState(&atual_mouse.x, &atual_mouse.y);
 
-                int dx =  evento->motion.xrel;
+                // novo destino baseado diretamente na posição do mouse
+                int destino_aux = atual_mouse.x - (pinguim.rect.w / 2);
 
-                if (dx != 0)
+                if (destino_aux + pinguim.rect.w < limite_dir && destino_aux > limite_esq)
                 {
-                    pinguim.incremento = dx;
-                    int destino_aux;
-
-                    if (pinguim.estado_movimento == PARADO)
-                        destino_aux = (int)pinguim.posx + pinguim.incremento;
-                    else
-                        destino_aux = (int)pinguim.posx + pinguim.incremento;
-
-                    if (destino_aux + pinguim.rect.w < limite_dir && destino_aux > limite_esq)
-                    {
-                        pinguim.destino = destino_aux;
-                        pinguim.estado_movimento = MOVENDO;
-
-                        pinguim.velocidade = (pinguim.destino > pinguim.posx) ? 
-                        pinguim.velocidade_inicial*pinguim.porcentagem_peso :
-                        -pinguim.velocidade_inicial*pinguim.porcentagem_peso;
-                    }
+                    pinguim.destino = destino_aux;
+                    pinguim.estado_movimento = MOVENDO;
                 }
-
-                inicial_mouse.x = atual_mouse.x;
             }
+
         }
 
         // ============================
         //  MOVIMENTO DA CARGA (FÍSICA)
         // ============================
 
-        sorteia_carga(renderizador, &cargas_jogadas);
+        if (!pinguim.atingido)
+        {
+            sorteia_carga(renderizador, &cargas_jogadas);
+        }
         calcula_movimento_cargas(&cargas_jogadas);
        
 
         // ============================
         //    MOVIMENTO DO PINGUIM
         // ============================
-        pinguim.now = SDL_GetTicks();
-        double dt = (pinguim.now - pinguim.last) / 1000.0;
 
-        if (pinguim.estado_movimento == MOVENDO)
+        if(!pinguim.atingido)
         {
-            pinguim.posx += pinguim.velocidade * dt;
+             pinguim.now = SDL_GetTicks();
+            double dt = (pinguim.now - pinguim.last) / 1000.0;
+            pinguim.last = pinguim.now;
 
-            if ((pinguim.velocidade > 0 && pinguim.posx >= pinguim.destino) ||
-                (pinguim.velocidade < 0 && pinguim.posx <= pinguim.destino))
+            if (pinguim.estado_movimento == MOVENDO)
             {
-                pinguim.posx = pinguim.destino;
-                pinguim.estado_movimento = PARADO;
+                // ---- INTERPOLAÇÃO SUAVE ----
+                // Quanto mais peso → menor porcentagem_peso → movimento mais lento
+                double suavizacao = 0.10 * pinguim.porcentagem_peso;
+
+                pinguim.posx += (pinguim.destino - pinguim.posx) * suavizacao;
+
+                // Atualiza posição do rect
+                pinguim.rect.x = (int)pinguim.posx;
+
+                // Se estiver muito perto, considera que chegou
+                if (fabs(pinguim.destino - pinguim.posx) < 0.5)
+                    pinguim.estado_movimento = PARADO;
             }
 
-            pinguim.rect.x = (int)pinguim.posx;
-        }
+            pinguim.last = pinguim.now;
 
-        pinguim.last = pinguim.now;
-
-        for(int i = 0; i <= cargas_jogadas.ultimo_index; i++)
-        {
-            if (cargas_jogadas.cargas[i].ativo == true)
+            for(int i = 0; i <= cargas_jogadas.ultimo_index; i++)
             {
-                if (SDL_HasIntersection(&pinguim.rect, &cargas_jogadas.cargas[i].rect))
+                if (cargas_jogadas.cargas[i].ativo == true)
                 {
-                    cargas_jogadas.cargas[i].ativo = false;
+                    if (SDL_HasIntersection(&pinguim.rect, &cargas_jogadas.cargas[i].rect))
+                    {
+                        cargas_jogadas.cargas[i].ativo = false;
 
-                    if (cargas_jogadas.cargas[i].tipo == PEIXE)
-                    {
-                        pinguim.txt = pinguim.texturas[8];
-                    }
-                    else if (cargas_jogadas.cargas[i].tipo == VASO)
-                    {
-                        pinguim.txt = pinguim.texturas[9];
-                    }
-                    else if (cargas_jogadas.cargas[i].tipo == BIGORNA)
-                    {
-                        pinguim.txt = pinguim.texturas[7];
-                    }
-                    else  if (cargas_jogadas.cargas[i].tipo == GRAOS)
-                    {
-                        if (pinguim.sacos <6)
+                        if (cargas_jogadas.cargas[i].tipo == PEIXE)
                         {
-                            pinguim.sacos +=1;
-                            pinguim.porcentagem_peso -= 0.10;
-                            pinguim.estado_carga = (Estados_pinguim_carga)pinguim.sacos;
-                            pinguim.txt = pinguim.texturas[pinguim.sacos];
+                            pinguim.txt = pinguim.texturas[8];
+                            pinguim.vidas -=1;
+                            pinguim.atingido = true;
+                            pinguim.momento_queda = SDL_GetTicks();
+                            pinguim.sacos = 0;
+                        }
+                        else if (cargas_jogadas.cargas[i].tipo == VASO)
+                        {
+                            pinguim.txt = pinguim.texturas[9];
+                            pinguim.vidas -=1;
+                            pinguim.atingido = true;
+                            pinguim.momento_queda = SDL_GetTicks();
+                            pinguim.sacos = 0;
+                        }
+                        else if (cargas_jogadas.cargas[i].tipo == BIGORNA)
+                        {
+                            pinguim.txt = pinguim.texturas[7];
+                            pinguim.vidas -=1;
+                            pinguim.atingido = true;
+                            pinguim.momento_queda = SDL_GetTicks();
+                            pinguim.sacos = 0;
+                        }
+                        else  if (cargas_jogadas.cargas[i].tipo == GRAOS)
+                        {
+                            if (pinguim.sacos <6)
+                            {
+                                pinguim.sacos +=1;
+                                pinguim.score +=8;
+                                pinguim.porcentagem_peso -= 0.10;
+                                pinguim.estado_carga = (Estados_pinguim_carga)pinguim.sacos;
+                                pinguim.txt = pinguim.texturas[pinguim.sacos];
 
+                            }
+                            else
+                            {
+                                pinguim.atingido = true;
+                                pinguim.momento_queda = SDL_GetTicks();
+                                pinguim.sacos = 0;
+                            }
                         }
                     }
+
                 }
 
-            }
-
-            if (pinguim.sacos >= 1 && SDL_HasIntersection(&pinguim.rect,&plataforma) && (SDL_GetTicks() - pinguim.ultima_entrega) >= pinguim.intervalo_entrega)
-            {
-                pinguim.ultima_entrega = SDL_GetTicks();
-                pinguim.sacos--;
-                pinguim.txt = pinguim.texturas[pinguim.sacos];
-                pinguim.porcentagem_peso +=0.10;
-                if(!pilha_cheia(&pilha_1))
+                if (pinguim.sacos >= 1 && SDL_HasIntersection(&pinguim.rect,&plataforma) && (SDL_GetTicks() - pinguim.ultima_entrega) >= pinguim.intervalo_entrega)
                 {
-                    push(renderizador,&pilha_1);
+                    pinguim.ultima_entrega = SDL_GetTicks();
+                    pinguim.sacos--;
+                    pinguim.txt = pinguim.texturas[pinguim.sacos];
+                    pinguim.porcentagem_peso +=0.10;
+                    pinguim.score +=12;
+                    if(!pilha_cheia(&pilha_1))
+                    {
+                        push(renderizador,&pilha_1);
+                    }
+                    else if (!pilha_cheia(&pilha_2))
+                    {
+                        push(renderizador,&pilha_2);
+                    }
                 }
-                else if (!pilha_cheia(&pilha_2))
-                {
-                    push(renderizador,&pilha_2);
-                }
-            }
-            
+            }   
         }
 
 
         // ============================
         //        DESENHO
         // ============================
+        char buffer[32];   // string que vamos montar
+        sprintf(buffer, "LIFE: %d", pinguim.vidas);   // monta a string
+
+        sfc_life = TTF_RenderText_Blended(fnt, buffer, clr);
+        assert(sfc_life != NULL);
+        txt_life = SDL_CreateTextureFromSurface(renderizador, sfc_life);
+        assert(txt_life != NULL);
+        
+        sprintf(buffer, "SCORE: %d", pinguim.score);   // monta a string
+        sfc_score = TTF_RenderText_Blended(fnt, buffer, clr);
+        assert(sfc_score != NULL);
+        txt_score = SDL_CreateTextureFromSurface(renderizador, sfc_score);
+        assert(txt_score != NULL);
         
         SDL_RenderCopy(renderizador, txt_background, NULL, &background);
 
