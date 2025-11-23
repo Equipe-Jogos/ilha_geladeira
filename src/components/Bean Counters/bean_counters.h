@@ -75,6 +75,9 @@ typedef struct
     SDL_Rect teste;
     int destino;
     int pos_inicial;    
+    Uint32 tempo_queda;
+    bool fade;
+
 
 } Carga;
 
@@ -129,7 +132,7 @@ void inicializa_pinguim(SDL_Renderer * renderizador, Pinguim * pinguim)
     pinguim->rect = (SDL_Rect){ pinguim->posicao_inicial, ALTURA*0.72, LARGURA*0.12, LARGURA*0.12};
     pinguim->estado_movimento = PARADO;
     pinguim->estado_carga = NAO_CARREGA;
-    pinguim->velocidade_inicial = LARGURA/100;
+    pinguim->velocidade_inicial = LARGURA/200;
     pinguim->velocidade = 0;
     pinguim->posx = pinguim->rect.x;
     pinguim->destino = pinguim->posx;
@@ -171,7 +174,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
     carga->pos_x = carga->rect.x;
     carga->pos_y = carga->rect.y;
     carga->tempo_anterior_carga = 0;
-
+    carga->fade = false;
     double space_x = limite_esq + rand() % (limite_dir - limite_esq + 1);
     carga->pos_inicial = carga->pos_y;
     carga->destino = (int)ALTURA*0.72;
@@ -189,7 +192,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
     // 3) velocidade Y correta para atingir o destino Y no mesmo tempo
     carga->velocidade_y = (dy - 0.5 * gravidade * carga->tempo * carga->tempo) / carga->tempo;
 
-    carga->tipo = (Enum_carga)rand()%4;
+    carga->tipo = rand()%4;
     
     switch (carga->tipo)
     {
@@ -216,7 +219,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
 
 void sorteia_carga(SDL_Renderer *renderizador, Vetor_carga * vetor)
 {
-    vetor->prob = rand()%60;
+    vetor->prob = rand()%200;
     if (vetor->tamanho > vetor->ultimo_index)
     {
         if (vetor->prob == 13)
@@ -230,13 +233,27 @@ void draw_cargas(SDL_Renderer * renderizador,Vetor_carga * vetor)
 {
         for (int i = 0; i <= vetor->ultimo_index; i++)
         {
-            Carga carga = vetor->cargas[i]; 
-            if (carga.ativo)
+            Carga * carga = &vetor->cargas[i]; 
+            if (carga->ativo)
             {
-                if(carga.tipo == GRAOS)
+
+                if (carga->fade)
+                {
+                    Uint8 alpha = 255;
+                    alpha -= 255 * (SDL_GetTicks() - carga->tempo_queda)/1000;
+                    if (alpha <= 0)
+                    { 
+                        alpha = 0;
+                        carga->ativo = false;
+
+                    }
+                    SDL_SetTextureAlphaMod(carga->txt, alpha);
+                }
+
+                if(carga->tipo == GRAOS)
                 {
                     double angulo;
-                    double porc = ((abs(carga.rect.y-carga.pos_inicial)) /(carga.destino-carga.pos_inicial));
+                    double porc = ((abs(carga->rect.y-carga->pos_inicial)) /(carga->destino-carga->pos_inicial));
 
                     if (porc <= 0.25)
                     {
@@ -255,11 +272,11 @@ void draw_cargas(SDL_Renderer * renderizador,Vetor_carga * vetor)
                         angulo = 180;
                     }
                     
-                    SDL_RenderCopyEx(renderizador, carga.txt, NULL, &carga.rect, angulo, NULL, SDL_FLIP_NONE);
+                    SDL_RenderCopyEx(renderizador, carga->txt, NULL, &carga->rect, angulo, NULL, SDL_FLIP_NONE);
                 }
                 else
                 {
-                    SDL_RenderCopy(renderizador, carga.txt,NULL, &carga.rect);
+                    SDL_RenderCopy(renderizador, carga->txt,NULL, &carga->rect);
                 }
             }
         }
@@ -369,6 +386,7 @@ void calcula_movimento_cargas(Vetor_carga * vetor)
 {
     for (int i=0;i<= vetor->ultimo_index; i++)
     {
+        if (!vetor->cargas[i].fade)
         calcula_movimento_carga(&vetor->cargas[i]);
     }
 
@@ -402,6 +420,8 @@ static inline int RenderBeanCountersScreen(
 
     IMG_Init(IMG_INIT_PNG);
 
+
+    SDL_Rect chao = {0,ALTURA*0.90, LARGURA,ALTURA*0.10};
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture * txt_background = IMG_LoadTexture(renderizador, "imgs/bean_counters/background.png");
     
@@ -511,7 +531,7 @@ static inline int RenderBeanCountersScreen(
         {
             for(int i = 0; i <= cargas_jogadas.ultimo_index; i++)
             {
-                if (cargas_jogadas.cargas[i].ativo == true)
+                if (cargas_jogadas.cargas[i].ativo && !cargas_jogadas.cargas[i].fade)
                 {
                     if (SDL_HasIntersection(&pinguim.rect, &cargas_jogadas.cargas[i].rect))
                     {
@@ -559,9 +579,12 @@ static inline int RenderBeanCountersScreen(
                             }
                             else
                             {
+                                pinguim.vidas -=1;
                                 pinguim.atingido = true;
                                 pinguim.momento_queda = SDL_GetTicks();
                                 pinguim.sacos = 0;
+                                pinguim.porcentagem_peso = 1;
+                                pinguim.txt = pinguim.texturas[6];
                             }
                         }
                     }
@@ -585,6 +608,19 @@ static inline int RenderBeanCountersScreen(
                     }
                 }
             }   
+        }
+
+        for (int i = 0; i <= cargas_jogadas.ultimo_index; i++)
+        {
+            Carga * carga = &cargas_jogadas.cargas[i];
+            if (carga->ativo && !carga->fade)
+            {            
+                if (SDL_HasIntersection(&chao, &carga->rect))
+                {
+                    carga->fade = true;
+                    carga->tempo_queda = SDL_GetTicks();
+                }
+            }
         }
 
         // ============================
