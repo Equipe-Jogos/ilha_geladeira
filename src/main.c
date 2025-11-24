@@ -68,7 +68,7 @@ int main(int args, char* argc[]) {
                 break;
             
             case STATE_JOGANDO:
-                RenderBeanCountersScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+                RenderGameScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
                 break;
 
             case STATE_BEANS_COUNTERS:

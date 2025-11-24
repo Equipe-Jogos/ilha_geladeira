@@ -221,7 +221,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
 
 void sorteia_carga(SDL_Renderer *renderizador, Vetor_carga * vetor)
 {
-    vetor->prob = rand()%100;
+    vetor->prob = rand()%80;
     if (vetor->tamanho > vetor->ultimo_index)
     {
         if (vetor->prob == 13)

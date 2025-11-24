@@ -64,7 +64,7 @@ static inline int RenderMenuScreen(
   
     while(true){
         SDL_GetMouseState(&mouse.x, &mouse.y);
-        if (SDL_PointInRect(&mouse,&jogar))
+        if (SDL_PointInRect(&mouse,&jogar.rect))
         {
             jogar.txt = jogar.txt_clicado;
         }
@@ -73,7 +73,7 @@ static inline int RenderMenuScreen(
             jogar.txt = jogar.txt_nao_clicado;
         }
 
-        if (SDL_PointInRect(&mouse,&personalizar))
+        if (SDL_PointInRect(&mouse,&personalizar.rect))
         {
             personalizar.txt = personalizar.txt_clicado;
         }
@@ -82,7 +82,7 @@ static inline int RenderMenuScreen(
             personalizar.txt = personalizar.txt_nao_clicado;
         }
 
-        if (SDL_PointInRect(&mouse,&sair))
+        if (SDL_PointInRect(&mouse,&sair.rect))
         {
             sair.txt = sair.txt_clicado;
         }

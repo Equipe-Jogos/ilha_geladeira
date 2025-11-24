@@ -35,6 +35,8 @@ static inline void IniciaMovimentacao(
         distancia,
         direcao_rad
     );
+    float dx = destino_x - *origem_x;
+    float dy = destino_y - *origem_y;
     
     if (*distancia > 0) {
         *velocidade_x = (dx / *distancia) * escalar_velocidade;

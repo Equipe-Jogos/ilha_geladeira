@@ -12,17 +12,26 @@
 #include "../../consts/consts.h"
 #include "../personalizacao/personalizacao.h" 
 
+
+typedef struct 
+{
+    SDL_Rect rect;
+    SDL_Texture * txt;
+    SDL_Texture * txt_nao_clicado;
+    SDL_Texture * txt_clicado;
+    
+} Objeto4;
+
 static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout, GameState *estadoJogo) {
     int LARGURA, ALTURA;
     int mouse_x, mouse_y;
     char caminho[100];
+
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
     SDL_GetMouseState(&mouse_x, &mouse_y);
 
     IMG_Init(IMG_INIT_PNG);
-    SDL_Texture *centroIMG = IMG_LoadTexture(renderizador, "imgs/centro.png");
-
-    
+    SDL_Texture *centroIMG = IMG_LoadTexture(renderizador, "imgs/centro.png");    
     SDL_Texture *textura_pinguim[TOTAL_DIRECOES];
     SDL_Texture *textura_atual;
 
@@ -35,59 +44,26 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     
     SDL_Rect pinguimRect = {LARGURA/2, ALTURA/2, 100, 160};
     SDL_Rect centroRect = {0, 0, LARGURA, ALTURA};
-    SDL_Rect sled_racing = {(LARGURA/5)-150, (ALTURA/2)-75, 300, 150}, pega_puffle = {(LARGURA/2)-150, (4*ALTURA/5)-75, 300, 150};
+    
+    Objeto4 coffe;
+    coffe.rect = (SDL_Rect){(LARGURA*0.10), (ALTURA*0.20), LARGURA*0.40, ALTURA*0.40};
+    coffe.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/coffe.png");
+    coffe.txt_clicado = IMG_LoadTexture(renderizador, "imgs/coffe_hover.png");
+
+    Objeto4 pega_puffle;
+    pega_puffle.rect = (SDL_Rect){(LARGURA*0.40), (ALTURA*0.20), LARGURA*0.3, ALTURA*0.3};
+    pega_puffle.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/pet_shop.png");
+    pega_puffle.txt_clicado = IMG_LoadTexture(renderizador, "imgs/pet_shop_hover.png");
 
     float escalar_velocidade = 1, velocidade_x = 0, velocidade_y = 0;
     SDL_Point_Float pinguim_posicao = {(LARGURA/2.0f), (ALTURA/2.0f)};
     SDL_Point_Float destino = {(LARGURA/2.0f), (ALTURA/2.0f)};
     float distancia = 0, direcao_rad = 0, dx = 0, dy = 0;
 
-    while (true) {
-        if (
-            SDL_PointInRect(
-                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
-                &sled_racing
-            )
-        ) {
-            *estadoJogo = STATE_BEANS_COUNTERS;
-            return 1;
-        }    
-
-        if (
-            SDL_PointInRect(
-                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
-                &pega_puffle
-            )
-        ) {
-            *estadoJogo = STATE_PEGA_PUFFLE;
-            return 1;
-        }
-
-        if (distancia > 0.5f) {
-            SDL_Point nova_posicao = AtualizaPosicao(
-                &pinguim_posicao.x, 
-                &pinguim_posicao.y, 
-                destino.x, 
-                destino.y, 
-                &velocidade_x, 
-                &velocidade_y, 
-                &distancia
-            );
-
-            pinguimRect.x = nova_posicao.x;
-            pinguimRect.y = nova_posicao.y;
-        }
-
-        SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
-        SDL_RenderClear(renderizador);
-        SDL_RenderCopy(renderizador, centroIMG, NULL, &centroRect);
-
-        SDL_SetRenderDrawColor(renderizador, 255, 0, 0, 100);
-        SDL_RenderFillRect(renderizador, &sled_racing);
-        SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 100);
-        SDL_RenderFillRect(renderizador, &pega_puffle);
-        SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
-
+    while (true) 
+    {
+        SDL_Point mouse;
+        
         if (AUX_WaitEventTimeout(evento, timeout)) {
             if (evento->type == SDL_KEYDOWN) {
                 if (evento->key.keysym.sym == SDLK_ESCAPE) {
@@ -122,6 +98,75 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
                 textura_atual = textura_pinguim[direcao];
             }
         }
+
+        SDL_GetMouseState(&mouse.x,&mouse.y);
+
+        if (SDL_PointInRect(&mouse,&coffe.rect))
+        {
+            coffe.txt = coffe.txt_clicado;
+        }
+        else
+        {
+           coffe.txt = coffe.txt_nao_clicado; 
+        }
+
+
+        if (SDL_PointInRect(&mouse,&pega_puffle.rect))
+        {
+            pega_puffle.txt = pega_puffle.txt_clicado;
+        }
+        else
+        {
+           pega_puffle.txt = pega_puffle.txt_nao_clicado; 
+        }
+
+          if (
+            SDL_PointInRect(
+                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
+                &coffe.rect
+            )
+        ) {
+            *estadoJogo = STATE_BEANS_COUNTERS;
+            return 1;
+        }    
+
+        if (
+            SDL_PointInRect(
+                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
+                &pega_puffle.rect
+            )
+        ) {
+            *estadoJogo = STATE_PEGA_PUFFLE;
+            return 1;
+        }
+
+
+        if (distancia > 0.5f) {
+            SDL_Point nova_posicao = AtualizaPosicao(
+                &pinguim_posicao.x, 
+                &pinguim_posicao.y, 
+                destino.x, 
+                destino.y, 
+                &velocidade_x, 
+                &velocidade_y, 
+                &distancia
+            );
+
+            pinguimRect.x = nova_posicao.x;
+            pinguimRect.y = nova_posicao.y;
+        }
+
+        
+        //SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
+        SDL_RenderClear(renderizador);
+        SDL_RenderCopy(renderizador, centroIMG, NULL, &centroRect);
+
+        SDL_RenderCopy(renderizador, pega_puffle.txt, NULL, &pega_puffle.rect);
+        //SDL_SetRenderDrawColor(renderizador, 255, 0, 0, 100);
+         SDL_RenderCopy(renderizador, coffe.txt, NULL, &coffe.rect);
+        //SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 100);
+        
+        SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
 
         SDL_RenderPresent(renderizador);
     }
