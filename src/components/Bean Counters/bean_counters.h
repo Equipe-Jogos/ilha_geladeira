@@ -77,6 +77,7 @@ typedef struct
     int pos_inicial;    
     Uint32 tempo_queda;
     bool fade;
+    double alpha;
 
 
 } Carga;
@@ -171,6 +172,7 @@ void inicializa_vetor_carga(Vetor_carga * vetor,int tam)
 void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
 {
     carga->rect = (SDL_Rect){ LARGURA * 0.85, ALTURA*0.52, LARGURA*0.07, LARGURA*0.07 };
+    carga->alpha = 255;
     carga->pos_x = carga->rect.x;
     carga->pos_y = carga->rect.y;
     carga->tempo_anterior_carga = 0;
@@ -219,7 +221,7 @@ void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
 
 void sorteia_carga(SDL_Renderer *renderizador, Vetor_carga * vetor)
 {
-    vetor->prob = rand()%200;
+    vetor->prob = rand()%100;
     if (vetor->tamanho > vetor->ultimo_index)
     {
         if (vetor->prob == 13)
@@ -231,55 +233,53 @@ void sorteia_carga(SDL_Renderer *renderizador, Vetor_carga * vetor)
 
 void draw_cargas(SDL_Renderer * renderizador,Vetor_carga * vetor)
 {
-        for (int i = 0; i <= vetor->ultimo_index; i++)
+    for (int i = 0; i <= vetor->ultimo_index; i++)
+    {
+        Carga * carga = &vetor->cargas[i]; 
+        if (carga->ativo)
         {
-            Carga * carga = &vetor->cargas[i]; 
-            if (carga->ativo)
+            if (carga->fade)
             {
+                carga->alpha -= 255 * (SDL_GetTicks() - carga->tempo_queda)/2000;
+                if ( carga->alpha <= 0)
+                { 
+                     carga->alpha = 0;
+                    carga->ativo = false;
 
-                if (carga->fade)
-                {
-                    Uint8 alpha = 255;
-                    alpha -= 255 * (SDL_GetTicks() - carga->tempo_queda)/1000;
-                    if (alpha <= 0)
-                    { 
-                        alpha = 0;
-                        carga->ativo = false;
-
-                    }
-                    SDL_SetTextureAlphaMod(carga->txt, alpha);
                 }
+                SDL_SetTextureAlphaMod(carga->txt,  carga->alpha);
+            }
 
-                if(carga->tipo == GRAOS)
-                {
-                    double angulo;
-                    double porc = ((abs(carga->rect.y-carga->pos_inicial)) /(carga->destino-carga->pos_inicial));
+            if(carga->tipo == GRAOS)
+            {
+                double angulo;
+                double porc = ((abs(carga->rect.y-carga->pos_inicial)) /(carga->destino-carga->pos_inicial));
 
-                    if (porc <= 0.25)
-                    {
-                        angulo = 0;
-                    }
-                    else if (porc <=0.50)
-                    {
-                        angulo = 45;
-                    }
-                    else if (porc <= 0.75)
-                    {
-                        angulo = 90;
-                    }
-                    else 
-                    {
-                        angulo = 180;
-                    }
-                    
-                    SDL_RenderCopyEx(renderizador, carga->txt, NULL, &carga->rect, angulo, NULL, SDL_FLIP_NONE);
-                }
-                else
+                if (porc <= 0.25)
                 {
-                    SDL_RenderCopy(renderizador, carga->txt,NULL, &carga->rect);
+                    angulo = 0;
                 }
+                else if (porc <=0.50)
+                {
+                    angulo = 45;
+                }
+                else if (porc <= 0.75)
+                {
+                    angulo = 90;
+                }
+                else 
+                {
+                    angulo = 180;
+                }
+                
+                SDL_RenderCopyEx(renderizador, carga->txt, NULL, &carga->rect, angulo, NULL, SDL_FLIP_NONE);
+            }
+            else
+            {
+                SDL_RenderCopy(renderizador, carga->txt,NULL, &carga->rect);
             }
         }
+    }
 }
 
 typedef struct {

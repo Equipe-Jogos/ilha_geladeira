@@ -34,6 +34,15 @@ extern Cor corSelecionada;
 Cor corSelecionada = AMARELO; // Definição única aqui
 #endif
 
+typedef struct 
+{
+    SDL_Rect rect;
+    SDL_Texture * txt;
+    SDL_Texture * txt_nao_clicado;
+    SDL_Texture * txt_clicado;
+
+} Objeto2;
+
 // ---------------- FUNÇÕES ----------------
 
 static inline void carregaImagens(SDL_Renderer *renderizador) {
@@ -73,8 +82,8 @@ static inline void carregaImagens(SDL_Renderer *renderizador) {
     elementos[BALAO2]       = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-2.png");
     elementos[CONTINUAR]    = IMG_LoadTexture(renderizador, "imgs/personalizar/memu_elementos.png");
     elementos[LOGO]         = IMG_LoadTexture(renderizador, "imgs/capa.png");
-    elementos[VOLTAR]       = IMG_LoadTexture(renderizador, "imgs/botoes/voltar.png");
-    elementos[VOLTAR_HOVER] = IMG_LoadTexture(renderizador, "imgs/botoes/voltar_hover.png");
+    elementos[VOLTAR]       = IMG_LoadTexture(renderizador, "imgs/botoes/b_voltar.png");
+    elementos[VOLTAR_HOVER] = IMG_LoadTexture(renderizador, "imgs/botoes/b_voltar_clicado.png");
 }
 
 static inline int RenderPersonalizacaoScreen(
@@ -95,23 +104,36 @@ static inline int RenderPersonalizacaoScreen(
 
     int LARGURA, ALTURA;
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
+
+    Objeto2 background;
+    background.rect = (SDL_Rect){0, 0, LARGURA, ALTURA};
+    background.txt = IMG_LoadTexture(renderizador, "imgs/background_personalizar.png");
+
+    Objeto2 quadro;
+    quadro.rect = (SDL_Rect){LARGURA*0.55, ALTURA*0.20, LARGURA*0.45, ALTURA*0.56};
+    quadro.txt = IMG_LoadTexture(renderizador, "imgs/personalizar/quadro.png");
+
     
     int tam_botao_x = 400, tam_botao_y = 120;
 
     SDL_Rect pinguim= {200, 100, 400, 400};
-    SDL_Rect balao1= {150, 400, 200, 200};
-    SDL_Rect balao2= {800, 100, 200, 200};
+   // SDL_Rect balao1= {150, 400, 200, 200};
+    //SDL_Rect balao2= {800, 100, 200, 200};
+    Objeto2 escolha;
+
+    escolha.rect = (SDL_Rect){LARGURA*0.60, ALTURA*0.20, LARGURA*0.35, ALTURA*0.05};
+    escolha.txt = IMG_LoadTexture(renderizador, "imgs/personalizar/escolha.png");
     SDL_Rect continuar= {800, 400, 200, 200};
     SDL_Rect voltar= {LARGURA/7, (4*ALTURA)/5, tam_botao_x, tam_botao_y};
     SDL_Rect corte = {30,200, 100,80 };
 
     SDL_Rect rectCores[TOTAL];
 
-    int startX = 900;
-    int startY = 250;
-    int espaco = 20;
-    int largura = 100;
-    int altura  = 100;
+    int startX = LARGURA*0.60;
+    int startY = ALTURA*0.30;
+    int espaco = 10;
+    int largura = 90;
+    int altura  = 90;
 
     for (int i = 0; i < TOTAL; i++) {
         rectCores[i].x = startX + (i % 5) * (largura + espaco);
@@ -127,8 +149,11 @@ static inline int RenderPersonalizacaoScreen(
 
         SDL_SetRenderDrawColor(renderizador,225, 225, 255, 0);
         SDL_RenderClear(renderizador);
-        SDL_RenderCopy(renderizador, elementos[BALAO1], NULL , &balao1);
-        SDL_RenderCopy(renderizador, elementos[BALAO2], NULL , &balao2);
+        SDL_RenderCopy(renderizador, background.txt, NULL, &background.rect);
+        SDL_RenderCopy(renderizador, quadro.txt, NULL, &quadro.rect);
+        //SDL_RenderCopy(renderizador, elementos[BALAO1], NULL , &balao1);
+        //SDL_RenderCopy(renderizador, elementos[BALAO2], NULL , &balao2);
+        SDL_RenderCopy(renderizador, escolha.txt, NULL , &escolha.rect);
         SDL_RenderCopy(renderizador, elementos[CONTINUAR], &corte , &continuar);
         SDL_RenderCopy(renderizador, SDL_PointInRect(&mouse, &voltar) ? elementos[VOLTAR_HOVER] : elementos[VOLTAR], NULL, &voltar);
 
@@ -152,7 +177,6 @@ static inline int RenderPersonalizacaoScreen(
         }
 
         SDL_RenderCopy(renderizador, pinguim_img, NULL , &pinguim);
-        SDL_SetRenderDrawColor(renderizador,0, 225, 255, 0);
         for (int i = 0; i < TOTAL; i++) {
             SDL_RenderCopy(renderizador, cores[i], NULL , &rectCores[i]);
         }
