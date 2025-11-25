@@ -27,4 +27,5 @@ A liberdade de exploração é o coração do projeto. Em vez de impor metas rí
 ### 🔨 Comando Para Compilação 
 
 gcc main.c -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+https://docs.google.com/presentation/d/1MjXlwC9B4kHb1Flx1dIKfmPmZhL9Ahc_xerQ4Bof-bY/edit?slide=id.g3a97a84ed68_14_4547#slide=id.g3a97a84ed68_14_4547
 
