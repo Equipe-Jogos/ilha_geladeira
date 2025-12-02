@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
+#include "../../utils/objeto.c"
 
 // ---------------- ENUMS ----------------
 
@@ -34,14 +35,6 @@ extern Cor corSelecionada;
 Cor corSelecionada = AMARELO; // Definição única aqui
 #endif
 
-typedef struct 
-{
-    SDL_Rect rect;
-    SDL_Texture * txt;
-    SDL_Texture * txt_nao_clicado;
-    SDL_Texture * txt_clicado;
-
-} Objeto2;
 
 // ---------------- FUNÇÕES ----------------
 
@@ -105,11 +98,11 @@ static inline int RenderPersonalizacaoScreen(
     int LARGURA, ALTURA;
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
 
-    Objeto2 background;
+    Objeto background;
     background.rect = (SDL_Rect){0, 0, LARGURA, ALTURA};
     background.txt = IMG_LoadTexture(renderizador, "imgs/background_personalizar.png");
 
-    Objeto2 quadro;
+    Objeto quadro;
     quadro.rect = (SDL_Rect){LARGURA*0.55, ALTURA*0.20, LARGURA*0.45, ALTURA*0.56};
     quadro.txt = IMG_LoadTexture(renderizador, "imgs/personalizar/quadro.png");
 
@@ -119,7 +112,7 @@ static inline int RenderPersonalizacaoScreen(
     SDL_Rect pinguim= {200, 100, 400, 400};
    // SDL_Rect balao1= {150, 400, 200, 200};
     //SDL_Rect balao2= {800, 100, 200, 200};
-    Objeto2 escolha;
+    Objeto escolha;
 
     escolha.rect = (SDL_Rect){LARGURA*0.60, ALTURA*0.20, LARGURA*0.35, ALTURA*0.05};
     escolha.txt = IMG_LoadTexture(renderizador, "imgs/personalizar/escolha.png");

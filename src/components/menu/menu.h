@@ -7,16 +7,9 @@
 #include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
 #include "../personalizacao/personalizacao.h"
+#include "../../utils/objeto.c"
 
 
-typedef struct 
-{
-    SDL_Rect rect;
-    SDL_Texture * txt;
-    SDL_Texture * txt_nao_clicado;
-    SDL_Texture * txt_clicado;
-
-} Objeto;
 
 static inline int RenderMenuScreen(
     SDL_Window *janela, 

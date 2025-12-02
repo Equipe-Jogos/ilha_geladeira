@@ -11,16 +11,8 @@
 #include "../../utils/Aux_movimentacao.h"
 #include "../../consts/consts.h"
 #include "../personalizacao/personalizacao.h" 
+#include "../../utils/objeto.c"
 
-
-typedef struct 
-{
-    SDL_Rect rect;
-    SDL_Texture * txt;
-    SDL_Texture * txt_nao_clicado;
-    SDL_Texture * txt_clicado;
-    
-} Objeto4;
 
 static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout, GameState *estadoJogo) {
     int LARGURA, ALTURA;
@@ -45,12 +37,12 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     SDL_Rect pinguimRect = {LARGURA/2, ALTURA/2, 100, 160};
     SDL_Rect centroRect = {0, 0, LARGURA, ALTURA};
     
-    Objeto4 coffe;
+    Objeto coffe;
     coffe.rect = (SDL_Rect){(LARGURA*0.10), (ALTURA*0.20), LARGURA*0.40, ALTURA*0.40};
     coffe.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/coffe.png");
     coffe.txt_clicado = IMG_LoadTexture(renderizador, "imgs/coffe_hover.png");
 
-    Objeto4 pega_puffle;
+    Objeto pega_puffle;
     pega_puffle.rect = (SDL_Rect){(LARGURA*0.40), (ALTURA*0.20), LARGURA*0.3, ALTURA*0.3};
     pega_puffle.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/pet_shop.png");
     pega_puffle.txt_clicado = IMG_LoadTexture(renderizador, "imgs/pet_shop_hover.png");
