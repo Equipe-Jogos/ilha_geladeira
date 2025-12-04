@@ -45,6 +45,7 @@ static inline int RenderDojo(
             if(evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE){
                 *estadoJogo = STATE_MENU;
                 SDL_DestroyTexture(background_textura);
+                SDL_DestroyTexture(carta_azul_textura);
                 IMG_Quit();
                 return 1;
             }
@@ -52,6 +53,7 @@ static inline int RenderDojo(
             if(evento->type == SDL_QUIT){
                 *estadoJogo = STATE_SAIR;
                 SDL_DestroyTexture(background_textura);
+                SDL_DestroyTexture(carta_azul_textura);
                 IMG_Quit();
                 return 0;
             }
@@ -59,9 +61,11 @@ static inline int RenderDojo(
 
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
+        SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &carta_azul);
         SDL_RenderPresent(renderizador);
     }
     SDL_DestroyTexture(background_textura);
+    SDL_DestroyTexture(carta_azul_textura);
     IMG_Quit();
     return 1;
 }
