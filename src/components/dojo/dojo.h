@@ -34,6 +34,10 @@ static inline int RenderDojo(
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture* background_textura = IMG_LoadTexture(renderizador, "imgs/dojo/background.png");
 
+    // Carta azul
+    SDL_Rect carta_azul = {0,0,LARGURA, ALTURA};
+    SDL_Texture* carta_azul_textura = IMG_LoadTexture(renderizador, "imgs/dojo/carta_azul.png");
+
     while(true){
     
         if (AUX_WaitEventTimeout(evento, timeout)){
