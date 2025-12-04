@@ -40,12 +40,14 @@ static inline int RenderDojo(
 
             if(evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE){
                 *estadoJogo = STATE_MENU;
+                SDL_DestroyTexture(background_textura);
                 IMG_Quit();
                 return 1;
             }
 
             if(evento->type == SDL_QUIT){
                 *estadoJogo = STATE_SAIR;
+                SDL_DestroyTexture(background_textura);
                 IMG_Quit();
                 return 0;
             }
@@ -55,5 +57,8 @@ static inline int RenderDojo(
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
         SDL_RenderPresent(renderizador);
     }
+    SDL_DestroyTexture(background_textura);
+    IMG_Quit();
+    return 1;
 }
 #endif
