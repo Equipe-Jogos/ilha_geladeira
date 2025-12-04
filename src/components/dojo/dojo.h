@@ -21,5 +21,18 @@ static inline int RenderDojo(
 {
     
     srand(time(NULL));
+
+    SDL_Point inicial_mouse;
+    SDL_Point atual_mouse;
+
+    obterTamanhoJanela(janela, &LARGURA, &ALTURA);
+    SDL_GetMouseState(&inicial_mouse.x, &inicial_mouse.y);
+
+    IMG_Init(IMG_INIT_PNG);
+
+    SDL_Rect background = {0,0,LARGURA, ALTURA};
+    // Adicionar imagem de fundo aqui
+    //SDL_Texture * txt_background = IMG_LoadTexture(renderizador, "imgs/bean_counters/background.png");
+
 }
 #endif
