@@ -34,6 +34,26 @@ static inline int RenderDojo(
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture* background_textura = IMG_LoadTexture(renderizador, "imgs/dojo/background.png");
 
+    while(true){
     
+        if (AUX_WaitEventTimeout(evento, timeout)){
+
+            if(evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE){
+                *estadoJogo = STATE_MENU;
+                IMG_Quit();
+                return 1;
+            }
+
+            if(evento->type == SDL_QUIT){
+                *estadoJogo = STATE_SAIR;
+                IMG_Quit();
+                return 0;
+            }
+        }
+
+        SDL_RenderClear(renderizador);
+        SDL_RenderCopy(renderizador, background_textura, NULL, &background);
+        SDL_RenderPresent(renderizador);
+    }
 }
 #endif
