@@ -30,9 +30,10 @@ static inline int RenderDojo(
 
     IMG_Init(IMG_INIT_PNG);
 
+    // Fundo de tela
     SDL_Rect background = {0,0,LARGURA, ALTURA};
-    // Adicionar imagem de fundo aqui
-    //SDL_Texture * txt_background = IMG_LoadTexture(renderizador, "imgs/bean_counters/background.png");
+    SDL_Texture* background_textura = IMG_LoadTexture(renderizador, "imgs/dojo/background.png");
 
+    
 }
 #endif
