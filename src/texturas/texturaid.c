@@ -69,6 +69,7 @@ typedef enum {
     TEX_BEAN_PINGUIM_VASO,
 
     TEX_FUNDO_DOJO,
+    TEX_CARTA_AZUL,
 
     TEX_TOTAL // sempre deixar por último!
 } TexturaID;

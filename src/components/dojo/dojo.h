@@ -36,6 +36,10 @@ static inline int RenderDojoScreen(
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture* background_textura = lista_txt.inicio[TEX_FUNDO_DOJO].txt;
 
+    // Carta azul
+    SDL_Rect carta_azul = {600,400,100, 100};
+    SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
+
     while(true){
     
         if (AUX_WaitEventTimeout(evento, timeout)){
@@ -43,6 +47,7 @@ static inline int RenderDojoScreen(
             if(evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE){
                 *estadoJogo = STATE_MENU;
                 SDL_DestroyTexture(background_textura);
+                SDL_DestroyTexture(carta_azul_textura);
                 IMG_Quit();
                 return 1;
             }
@@ -50,6 +55,7 @@ static inline int RenderDojoScreen(
             if(evento->type == SDL_QUIT){
                 *estadoJogo = STATE_SAIR;
                 SDL_DestroyTexture(background_textura);
+                SDL_DestroyTexture(carta_azul_textura);
                 IMG_Quit();
                 return 0;
             }
@@ -57,9 +63,11 @@ static inline int RenderDojoScreen(
 
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
+        SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &carta_azul);
         SDL_RenderPresent(renderizador);
     }
     SDL_DestroyTexture(background_textura);
+    SDL_DestroyTexture(carta_azul_textura);
     IMG_Quit();
     return 1;
 }
