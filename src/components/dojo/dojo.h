@@ -11,7 +11,7 @@
 #include "../../utils/Aux_monitor.h"
 #include "../personalizacao/personalizacao.h"
 
-static inline int RenderDojo(
+static inline int RenderDojoScreen(
     SDL_Window *janela, 
     SDL_Renderer *renderizador, 
     SDL_Event * evento, 
