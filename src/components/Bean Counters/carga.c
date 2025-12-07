@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include "globais.c"
 #include "enums.c"
+#include "../../texturas/leitura_arquivos.c"
+#include "../../texturas/globais.c"
 
 // -----------------------------
 //        STRUCT CARGA
@@ -77,16 +79,16 @@ Carga* cria_carga(SDL_Renderer *renderizador)
     switch (c->tipo)
     {
         case GRAOS:
-            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Coffe_bag.webp");
+            c->txt = IMG_LoadTexture(renderizador, lista_txt.inicio[TEX_BEAN_SACO].caminho);
             break;
         case PEIXE:
-            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Fish_bean_counters.webp");
+            c->txt = IMG_LoadTexture(renderizador, lista_txt.inicio[TEX_BEAN_PEIXE].caminho);
             break;
         case BIGORNA:
-            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Anvil.webp");
+            c->txt = IMG_LoadTexture(renderizador, lista_txt.inicio[TEX_BEAN_BIGORNA].caminho);
             break;
         case VASO:
-            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Flower_pot.webp");
+            c->txt = IMG_LoadTexture(renderizador, lista_txt.inicio[TEX_BEAN_VASO].caminho);
             break;
     }
 
@@ -167,9 +169,6 @@ void remove_carga(ListaCarga *lista, Carga *carga)
             }
 
             // Libera recursos
-            if (atual->txt)
-                SDL_DestroyTexture(atual->txt);
-
             free(atual);
             return; // acabou
         }

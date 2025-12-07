@@ -15,6 +15,8 @@
 #include "carga.c"
 #include "pilha.c"
 #include "enums.c"
+#include "../../texturas/leitura_arquivos.c"
+#include "../../texturas/globais.c"
 
 // ==================================================
 // TELA PRINCIPAL — PINGUIM MANTIDO, CARGA CORRIGIDA
@@ -44,20 +46,20 @@ static inline int RenderBeanCountersScreen(
 
     SDL_Rect chao = {0, ALTURA * 0.90, LARGURA, ALTURA * 0.10};
     SDL_Rect background = {0, 0, LARGURA, ALTURA};
-    SDL_Texture *txt_background = IMG_LoadTexture(renderizador, "imgs/bean_counters/background.png");
+    SDL_Texture *txt_background = lista_txt.inicio[TEX_BEAN_BACKGROUND].txt;
 
     SDL_Rect neve = {0, ALTURA * 0.37, LARGURA, ALTURA * 0.70};
-    SDL_Texture *txt_neve = IMG_LoadTexture(renderizador, "imgs/bean_counters/neve.png");
+    SDL_Texture *txt_neve = lista_txt.inicio[TEX_BEAN_NEVE].txt;
 
     SDL_Rect plataforma = {0, ALTURA * 0.80, LARGURA * 0.30, ALTURA * 0.15};
-    SDL_Texture *txt_plataforma = IMG_LoadTexture(renderizador, "imgs/bean_counters/plataforma.png");
+    SDL_Texture *txt_plataforma = lista_txt.inicio[TEX_BEAN_PLATAFORMA].txt;
 
     // Pinguim
     Pinguim pinguim;
     inicializa_pinguim(renderizador, &pinguim);
 
     // Caminhão
-    SDL_Texture *caminhao_txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/trucker.png");
+    SDL_Texture *caminhao_txt = lista_txt.inicio[TEX_BEAN_TRUCKER].txt;
     SDL_Rect caminhao = {LARGURA * 0.80, ALTURA * 0.15, LARGURA * 0.20, ALTURA * 0.85};
 
     // CARGA

@@ -33,7 +33,7 @@ int push(SDL_Renderer * renderizador, Pilha *p) {
     Carga carga;
     carga.rect = (SDL_Rect){p->pos_x, p->pos_y, LARGURA*0.07, LARGURA*0.07 };
     carga.tipo = GRAOS;
-    carga.txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Coffe_bag.webp");
+    carga.txt = lista_txt.inicio[TEX_BEAN_SACO].txt;
     p->pos_y -= LARGURA*0.02;
     p->data[++p->topo] = carga;
     return 1;

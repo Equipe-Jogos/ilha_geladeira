@@ -60,16 +60,16 @@ void inicializa_pinguim(SDL_Renderer * renderizador, Pinguim * pinguim)
     pinguim->intervalo_entrega = 250;
 
     pinguim->texturas = malloc(10*sizeof(SDL_Texture *));
-    pinguim->texturas[0] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin0.webp");
-    pinguim->texturas[1] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin1.webp");
-    pinguim->texturas[2] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin2.webp");
-    pinguim->texturas[3] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin3.webp");
-    pinguim->texturas[4] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin4.webp");
-    pinguim->texturas[5] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin5.webp");
-    pinguim->texturas[6] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin6.webp");
-    pinguim->texturas[7] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin_anvil.webp");
-    pinguim->texturas[8] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin_fish.webp");
-    pinguim->texturas[9] = IMG_LoadTexture(renderizador, "imgs/bean_counters/penguin_pot.webp");
+    pinguim->texturas[0] = lista_txt.inicio[TEX_BEAN_PINGUIM0].txt;
+    pinguim->texturas[1] = lista_txt.inicio[TEX_BEAN_PINGUIM1].txt;
+    pinguim->texturas[2] = lista_txt.inicio[TEX_BEAN_PINGUIM2].txt;
+    pinguim->texturas[3] = lista_txt.inicio[TEX_BEAN_PINGUIM3].txt;
+    pinguim->texturas[4] = lista_txt.inicio[TEX_BEAN_PINGUIM4].txt;
+    pinguim->texturas[5] = lista_txt.inicio[TEX_BEAN_PINGUIM5].txt;
+    pinguim->texturas[6] = lista_txt.inicio[TEX_BEAN_PINGUIM6].txt;
+    pinguim->texturas[7] = lista_txt.inicio[TEX_BEAN_PINGUIM_BIGORNA].txt;
+    pinguim->texturas[8] = lista_txt.inicio[TEX_BEAN_PINGUIM_PEIXE].txt;
+    pinguim->texturas[9] = lista_txt.inicio[TEX_BEAN_PINGUIM_VASO].txt;
 
 
     pinguim->txt = pinguim->texturas[0];
