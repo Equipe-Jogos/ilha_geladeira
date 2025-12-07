@@ -78,6 +78,8 @@ typedef enum {
     TEX_PERDEU, 
     TEX_GANHOU,
 
+    TEX_MOEDA,
+
     TEX_TOTAL // sempre deixar por último!
 } TexturaID;
 

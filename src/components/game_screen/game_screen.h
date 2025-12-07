@@ -27,6 +27,10 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     SDL_Texture *textura_pinguim[TOTAL_DIRECOES];
     SDL_Texture *textura_atual;
 
+    // Moeda
+    SDL_Rect moeda = {0, 0, 50, 50};
+    SDL_Texture* moeda_textura = lista_txt.inicio[TEX_MOEDA].txt;
+
     for (int i = 0; i < TOTAL_DIRECOES; i++) {
         sprintf(caminho, "imgs/pinguim/%s/%s.png", nomes_cores[corSelecionada], nomes_direcoes[i]);
         textura_pinguim[i] = IMG_LoadTexture(renderizador, caminho);
@@ -159,6 +163,7 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         //SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 100);
         
         SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
+        SDL_RenderCopy(renderizador, moeda_textura, NULL, &moeda); // Moeda
 
         SDL_RenderPresent(renderizador);
     }

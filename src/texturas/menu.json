@@ -75,7 +75,9 @@
     { "nome": "gelo_5",          "caminho": "imgs/dojo/gelo_5.png" },
     { "nome": "gelo_6",          "caminho": "imgs/dojo/gelo_6.png" },
     { "nome": "perdeu",          "caminho": "imgs/dojo/x.png" },
-    { "nome": "ganhou",          "caminho": "imgs/dojo/ok.png" }
+    { "nome": "ganhou",          "caminho": "imgs/dojo/ok.png" },
+
+    { "nome": "moeda",          "caminho": "imgs/moeda.png" }
   ]
 }
 
