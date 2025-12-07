@@ -109,6 +109,8 @@ static inline int RenderDojoScreen(
     sortearCartas(cartas_pool, cartasNPC);
 
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
+    SDL_Texture* ganhou_textura = lista_txt.inicio[TEX_GANHOU].txt;
+    SDL_Texture* perdeu_textura = lista_txt.inicio[TEX_PERDEU].txt;
 
     SDL_Rect cartas_player[NUM_CARTAS_PLAYER];
     SDL_Rect cartas_azuis[NUM_CARTAS_PLAYER];
@@ -186,18 +188,45 @@ static inline int RenderDojoScreen(
                 else if (resultado == -1) npcScore += 3;
                 else { jogadorScore += 1; npcScore += 1; }
 
+                // Render do duelo
                 SDL_RenderClear(renderizador);
                 SDL_RenderCopy(renderizador, background_textura, NULL, &background);
+
+                // Render cartas ainda visíveis
                 for (int i = 0; i < cartasRestantesJogador; i++) {
                     SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
                     SDL_RenderCopy(renderizador, cartasJogador[i].textura, NULL, &cartas_player[i]);
                 }
                 SDL_RenderCopy(renderizador, cartasNPC[cartaNPCSelecionada].textura, NULL, &cartaNPC_rect);
                 SDL_RenderCopy(renderizador, cartasJogador[cartaSelecionada].textura, NULL, &carta_grande);
+
+                SDL_Rect txt_rect = {0,0,150,150};
+                if (resultado == 1) {
+                    // jogador ganhou -> mostrar na carta de cima (grande)
+                    txt_rect.x = carta_grande.x + carta_grande.w/2 - txt_rect.w/2;
+                    txt_rect.y = carta_grande.y + carta_grande.h/2 - txt_rect.h/2;
+                    SDL_RenderCopy(renderizador, ganhou_textura, NULL, &txt_rect);
+
+                    // NPC perdeu
+                    txt_rect.x = cartaNPC_rect.x + cartaNPC_rect.w/2 - txt_rect.w/2;
+                    txt_rect.y = cartaNPC_rect.y + cartaNPC_rect.h/2 - txt_rect.h/2;
+                    SDL_RenderCopy(renderizador, perdeu_textura, NULL, &txt_rect);
+                } else if (resultado == -1) {
+                    // jogador perdeu -> mostrar na carta de cima (grande)
+                    txt_rect.x = carta_grande.x + carta_grande.w/2 - txt_rect.w/2;
+                    txt_rect.y = carta_grande.y + carta_grande.h/2 - txt_rect.h/2;
+                    SDL_RenderCopy(renderizador, perdeu_textura, NULL, &txt_rect);
+
+                    // NPC ganhou
+                    txt_rect.x = cartaNPC_rect.x + cartaNPC_rect.w/2 - txt_rect.w/2;
+                    txt_rect.y = cartaNPC_rect.y + cartaNPC_rect.h/2 - txt_rect.h/2;
+                    SDL_RenderCopy(renderizador, ganhou_textura, NULL, &txt_rect);
+                }
+
                 SDL_RenderPresent(renderizador);
+                SDL_Delay(3000); // delay aumentado para 3 segundos
 
-                SDL_Delay(1500);
-
+                // Remover cartas após duelo
                 removerCartaJogador(cartasJogador, cartaSelecionada, &cartasRestantesJogador);
                 removerCartaNPC(cartasNPC, cartaNPCSelecionada, &cartasRestantesNPC);
 
@@ -213,6 +242,7 @@ static inline int RenderDojoScreen(
                 return 1;
         }
 
+        // Render normal das cartas restantes
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
         for (int i = 0; i < cartasRestantesJogador; i++) {
