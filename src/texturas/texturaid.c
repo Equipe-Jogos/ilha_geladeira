@@ -70,6 +70,11 @@ typedef enum {
 
     TEX_FUNDO_DOJO,
     TEX_CARTA_AZUL,
+    TEX_AGUA_3,
+    TEX_FOGO_4,
+    TEX_FOGO_7,
+    TEX_GELO_5,
+    TEX_GELO_6,
 
     TEX_TOTAL // sempre deixar por último!
 } TexturaID;

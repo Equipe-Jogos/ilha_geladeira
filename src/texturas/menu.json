@@ -68,7 +68,12 @@
     { "nome": "bean_pinguim_vaso",          "caminho": "imgs/bean_counters/penguin_pot.webp" },
 
     { "nome": "fundo_dojo",          "caminho": "imgs/dojo/background.png" },
-    { "nome": "carta_azul",          "caminho": "imgs/dojo/carta_azul.png" }       
+    { "nome": "carta_azul",          "caminho": "imgs/dojo/carta_azul.png" },
+    { "nome": "agua_3",          "caminho": "imgs/dojo/agua_3.png" },
+    { "nome": "fogo_4",          "caminho": "imgs/dojo/fogo_4.png" },
+    { "nome": "fogo_7",          "caminho": "imgs/dojo/fogo_7.png" },
+    { "nome": "gelo_5",          "caminho": "imgs/dojo/gelo_5.png" },
+    { "nome": "gelo_6",          "caminho": "imgs/dojo/gelo_6.png" }
   ]
 }
 

@@ -14,65 +14,71 @@
 #include "../../texturas/globais.c"
 
 static inline int RenderDojoScreen(
-    SDL_Window *janela, 
-    SDL_Renderer *renderizador, 
-    SDL_Event * evento, 
+    SDL_Window *janela,
+    SDL_Renderer *renderizador,
+    SDL_Event * evento,
     Uint32 *timeout,
-    GameState *estadoJogo  
-    )
+    GameState *estadoJogo
+)
 {
-    
     srand(time(NULL));
-
-    SDL_Point inicial_mouse;
-    SDL_Point atual_mouse;
-
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
-    SDL_GetMouseState(&inicial_mouse.x, &inicial_mouse.y);
-
     IMG_Init(IMG_INIT_PNG);
 
-    // Fundo de tela
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture* background_textura = lista_txt.inicio[TEX_FUNDO_DOJO].txt;
 
-    // Cartas azuis
     const int num_cartas = 5;
-    SDL_Rect cartas_azuis[num_cartas];
+
+    // Cartas jogador
+    SDL_Texture* cartas_texturas[num_cartas];
+    cartas_texturas[0] = lista_txt.inicio[TEX_AGUA_3].txt;
+    cartas_texturas[1] = lista_txt.inicio[TEX_FOGO_4].txt;
+    cartas_texturas[2] = lista_txt.inicio[TEX_FOGO_7].txt;
+    cartas_texturas[3] = lista_txt.inicio[TEX_GELO_5].txt;
+    cartas_texturas[4] = lista_txt.inicio[TEX_GELO_6].txt;
+
+    // Cartas azuis
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
 
-    // Configurações das cartas
-    int larguraCarta = 100;
-    int alturaCarta = 100;
-    int margem = 20;
-    
-    int larguraTotal = num_cartas * larguraCarta + (num_cartas - 1) * margem;
-    int posInicialX = ((LARGURA - larguraTotal) / 2) - 300;  
-    int posY = ALTURA - alturaCarta - 40;
+    SDL_Rect cartas_player[num_cartas];
+    SDL_Rect cartas_azuis[num_cartas];
 
-    for(int i = 0; i < num_cartas; i++){
-        cartas_azuis[i].x = posInicialX + i * (larguraCarta + margem);
-        cartas_azuis[i].y = posY;
-        cartas_azuis[i].w = larguraCarta;
-        cartas_azuis[i].h = alturaCarta;
+    // === POSICIONAMENTO DAS CARTAS ===
+    int card_w = 200;
+    int card_h = 200;
+    int margem_inferior = 25;
+
+    // Cartas azuis (seu código original permanece!)
+    int pos_y = ALTURA - card_h;
+    for(int i = 0; i < num_cartas; i++) {
+        cartas_azuis[i].x = i * (card_w / 2);
+        cartas_azuis[i].y = pos_y;
+        cartas_azuis[i].w = card_w;
+        cartas_azuis[i].h = card_h;
     }
 
-    while(true){
-    
-        if (AUX_WaitEventTimeout(evento, timeout)){
+    // Cartas do jogador (apenas o X foi corrigido — desenhar da direita para a esquerda)
+    int espacamento = (card_w / 2);
+    for(int i = num_cartas - 1; i >= 0; i--) {
+        cartas_player[i].x = LARGURA - card_w - ( (num_cartas - 1 - i) * espacamento );
+        cartas_player[i].y = pos_y;
+        cartas_player[i].w = card_w;
+        cartas_player[i].h = card_h;
+    }
 
+    // ================================
+
+    while(true){
+
+        if (AUX_WaitEventTimeout(evento, timeout)){
             if(evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE){
                 *estadoJogo = STATE_MENU;
-                SDL_DestroyTexture(background_textura);
-                SDL_DestroyTexture(carta_azul_textura);
                 IMG_Quit();
                 return 1;
             }
-
             if(evento->type == SDL_QUIT){
                 *estadoJogo = STATE_SAIR;
-                SDL_DestroyTexture(background_textura);
-                SDL_DestroyTexture(carta_azul_textura);
                 IMG_Quit();
                 return 0;
             }
@@ -81,17 +87,19 @@ static inline int RenderDojoScreen(
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
 
-        // Renderiza as 5 cartas azuis
-        for(int i = 0; i < num_cartas; i++){
+        // Cartas azuis (NPC)
+        for(int i = 0; i < num_cartas; i++)
             SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
-        }
+
+        // Cartas do jogador
+        for(int i = 0; i < num_cartas; i++)
+            SDL_RenderCopy(renderizador, cartas_texturas[i], NULL, &cartas_player[i]);
 
         SDL_RenderPresent(renderizador);
     }
 
-    SDL_DestroyTexture(background_textura);
-    SDL_DestroyTexture(carta_azul_textura);
     IMG_Quit();
     return 1;
 }
+
 #endif
