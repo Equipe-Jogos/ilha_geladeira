@@ -5,7 +5,6 @@
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <time.h>
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/Aux_monitor.h"
@@ -16,24 +15,66 @@
 #define NUM_CARTAS_PLAYER 3
 #define NUM_CARTAS_POOL 5
 
-// Armazenar índice da carta selecionada (-1 = nenhuma)
 static int cartaSelecionada = -1;
-
-// Armazenar índice da carta NPC (-1 = ainda não selecionada)
 static int cartaNPCSelecionada = -1;
 
-// --- Função que sorteia as cartas do jogador sem repetição ---
-static inline void sortearCartas(SDL_Texture** cartas_pool, SDL_Texture** cartas_destino)
-{
+typedef enum { GELO, AGUA, FOGO } Elemento;
+
+typedef struct {
+    Elemento elemento;
+    int pontuacao;
+    SDL_Texture* textura;
+} Carta;
+
+typedef enum {
+    DUEL_SELECIONANDO,
+    DUEL_COMPARANDO,
+    DUEL_FINALIZADO
+} DuelState;
+
+// Sorteio de cartas sem repetição
+static inline void sortearCartas(Carta* cartas_pool, Carta* cartas_destino) {
     bool usados[NUM_CARTAS_POOL] = {false};
     for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
         int idx;
-        do {
-            idx = rand() % NUM_CARTAS_POOL;
-        } while (usados[idx]);
+        do { idx = rand() % NUM_CARTAS_POOL; } while (usados[idx]);
         usados[idx] = true;
         cartas_destino[i] = cartas_pool[idx];
     }
+}
+
+// Comparar cartas por elemento e desempate por pontuação
+static inline int compararCartas(Carta jogador, Carta npc) {
+    if (jogador.elemento == npc.elemento) {
+        if (jogador.pontuacao > npc.pontuacao) return 1;
+        else if (jogador.pontuacao < npc.pontuacao) return -1;
+        else return 0;
+    }
+
+    // Atributos: gelo > agua > fogo > gelo
+    if ((jogador.elemento == GELO && npc.elemento == AGUA) ||
+        (jogador.elemento == AGUA && npc.elemento == FOGO) ||
+        (jogador.elemento == FOGO && npc.elemento == GELO)) {
+        return 1; // jogador vence
+    } else {
+        return -1; // NPC vence
+    }
+}
+
+// Remove carta do jogador
+static inline void removerCartaJogador(Carta* array, int index, int* tamanho) {
+    for (int i = index; i < (*tamanho) - 1; i++) {
+        array[i] = array[i + 1];
+    }
+    (*tamanho)--;
+}
+
+// Remove carta do NPC
+static inline void removerCartaNPC(Carta* array, int index, int* tamanho) {
+    for (int i = index; i < (*tamanho) - 1; i++) {
+        array[i] = array[i + 1];
+    }
+    (*tamanho)--;
 }
 
 static inline int RenderDojoScreen(
@@ -42,94 +83,79 @@ static inline int RenderDojoScreen(
     SDL_Event *evento,
     Uint32 *timeout,
     GameState *estadoJogo
-)
-{
+) {
     srand(time(NULL));
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
     IMG_Init(IMG_INIT_PNG);
 
-    SDL_Rect background = {0,0,LARGURA, ALTURA};
+    SDL_Rect background = {0, 0, LARGURA, ALTURA};
     SDL_Texture* background_textura = lista_txt.inicio[TEX_FUNDO_DOJO].txt;
 
-    // texturas cartas jogador
-    SDL_Texture* cartas_pool[NUM_CARTAS_POOL] = {
-        lista_txt.inicio[TEX_AGUA_3].txt,
-        lista_txt.inicio[TEX_FOGO_4].txt,
-        lista_txt.inicio[TEX_FOGO_7].txt,
-        lista_txt.inicio[TEX_GELO_5].txt,
-        lista_txt.inicio[TEX_GELO_6].txt
+    // Pool de cartas
+    Carta cartas_pool[NUM_CARTAS_POOL] = {
+        {AGUA, 3, lista_txt.inicio[TEX_AGUA_3].txt},
+        {FOGO, 4, lista_txt.inicio[TEX_FOGO_4].txt},
+        {FOGO, 7, lista_txt.inicio[TEX_FOGO_7].txt},
+        {GELO, 5, lista_txt.inicio[TEX_GELO_5].txt},
+        {GELO, 6, lista_txt.inicio[TEX_GELO_6].txt}
     };
 
-    // Cartas sorteadas que serão exibidas
-    SDL_Texture* cartas_texturas[NUM_CARTAS_PLAYER];
-    sortearCartas(cartas_pool, cartas_texturas);
+    // Sorteio das cartas do jogador
+    Carta cartasJogador[NUM_CARTAS_PLAYER];
+    sortearCartas(cartas_pool, cartasJogador);
 
-    // Textura das cartas azuis (base)
+    // Sorteio das cartas do NPC
+    Carta cartasNPC[NUM_CARTAS_PLAYER];
+    sortearCartas(cartas_pool, cartasNPC);
+
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
 
     SDL_Rect cartas_player[NUM_CARTAS_PLAYER];
     SDL_Rect cartas_azuis[NUM_CARTAS_PLAYER];
 
-    // === POSICIONAMENTO ===
-    int card_w = 200;
-    int card_h = 200;
+    int card_w = 200, card_h = 200;
     int pos_y = ALTURA - card_h;
-
-    // Cartas azuis (base)
     for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
         cartas_azuis[i].x = i * (card_w / 2);
         cartas_azuis[i].y = pos_y;
         cartas_azuis[i].w = card_w;
         cartas_azuis[i].h = card_h;
-    }
 
-    // Cartas do jogador 
-    int espacamento = card_w; 
-    for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
-        cartas_player[i].x = LARGURA - card_w - i * espacamento;
+        cartas_player[i].x = LARGURA - card_w - i * card_w;
         cartas_player[i].y = pos_y;
         cartas_player[i].w = card_w;
         cartas_player[i].h = card_h;
     }
 
-    // Retângulo para carta selecionada grande
-    SDL_Rect carta_grande = {0};
-    carta_grande.w = 350;
-    carta_grande.h = 350;
-    carta_grande.x = LARGURA - carta_grande.w - 30;
-    carta_grande.y = 40;
+    SDL_Rect carta_grande = {LARGURA - 350 - 30, 40, 350, 350};
+    SDL_Rect cartaNPC_rect = {40, 40, 350, 350};
 
-    // Retângulo carta NPC
-    SDL_Rect cartaNPC_rect = {40, 40, 350, 350}; 
+    DuelState dueloEstado = DUEL_SELECIONANDO;
+    int cartasRestantesJogador = NUM_CARTAS_PLAYER;
+    int cartasRestantesNPC = NUM_CARTAS_PLAYER;
+    int jogadorScore = 0, npcScore = 0;
 
     while (true) {
-
         if (AUX_WaitEventTimeout(evento, timeout)) {
-
-            // === Seleção de carta do jogador ===
             if (evento->type == SDL_MOUSEBUTTONDOWN) {
                 int mx = evento->button.x;
                 int my = evento->button.y;
-
                 bool clicouNaCarta = false;
-                for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
+
+                for (int i = 0; i < cartasRestantesJogador; i++) {
                     if(mx >= cartas_player[i].x && mx <= cartas_player[i].x + cartas_player[i].w &&
-                       my >= cartas_player[i].y && my <= cartas_player[i].y + cartas_player[i].h)
+                       my >= cartas_player[i].y && my <= cartas_player[i].y + cartas_player[i].h) 
                     {
                         cartaSelecionada = i;
                         clicouNaCarta = true;
-
-                        // NPC escolhe carta aleatória **somente após jogador clicar**
-                        if(cartaNPCSelecionada == -1){
-                            cartaNPCSelecionada = rand() % NUM_CARTAS_POOL;
-                        }
-
+                        if(cartaNPCSelecionada == -1)
+                            cartaNPCSelecionada = rand() % cartasRestantesNPC;
                         break;
                     }
                 }
-                if(!clicouNaCarta){
+                if(!clicouNaCarta) {
                     cartaSelecionada = -1;
-                    cartaNPCSelecionada = -1; // reset se clicar fora
+                    cartaNPCSelecionada = -1;
                 }
             }
 
@@ -145,25 +171,58 @@ static inline int RenderDojoScreen(
             }
         }
 
+        switch (dueloEstado) {
+            case DUEL_SELECIONANDO:
+                if (cartaSelecionada != -1 && cartaNPCSelecionada != -1)
+                    dueloEstado = DUEL_COMPARANDO;
+                break;
+
+            case DUEL_COMPARANDO: {
+                Carta cJog = cartasJogador[cartaSelecionada];
+                Carta cNPC = cartasNPC[cartaNPCSelecionada];
+                int resultado = compararCartas(cJog, cNPC);
+
+                if (resultado == 1) jogadorScore += 3;
+                else if (resultado == -1) npcScore += 3;
+                else { jogadorScore += 1; npcScore += 1; }
+
+                SDL_RenderClear(renderizador);
+                SDL_RenderCopy(renderizador, background_textura, NULL, &background);
+                for (int i = 0; i < cartasRestantesJogador; i++) {
+                    SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
+                    SDL_RenderCopy(renderizador, cartasJogador[i].textura, NULL, &cartas_player[i]);
+                }
+                SDL_RenderCopy(renderizador, cartasNPC[cartaNPCSelecionada].textura, NULL, &cartaNPC_rect);
+                SDL_RenderCopy(renderizador, cartasJogador[cartaSelecionada].textura, NULL, &carta_grande);
+                SDL_RenderPresent(renderizador);
+
+                SDL_Delay(1500);
+
+                removerCartaJogador(cartasJogador, cartaSelecionada, &cartasRestantesJogador);
+                removerCartaNPC(cartasNPC, cartaNPCSelecionada, &cartasRestantesNPC);
+
+                cartaSelecionada = -1;
+                cartaNPCSelecionada = -1;
+                dueloEstado = (cartasRestantesJogador > 0 && cartasRestantesNPC > 0) ? DUEL_SELECIONANDO : DUEL_FINALIZADO;
+                break;
+            }
+
+            case DUEL_FINALIZADO:
+                *estadoJogo = STATE_JOGANDO;
+                IMG_Quit();
+                return 1;
+        }
+
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
-
-        // NPC (base azul)
-        for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
+        for (int i = 0; i < cartasRestantesJogador; i++) {
             SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
-
-        // Carta NPC aleatória só se jogador já selecionou
+            SDL_RenderCopy(renderizador, cartasJogador[i].textura, NULL, &cartas_player[i]);
+        }
         if(cartaNPCSelecionada != -1)
-            SDL_RenderCopy(renderizador, cartas_pool[cartaNPCSelecionada], NULL, &cartaNPC_rect);
-
-        // Jogador (sorteadas)
-        for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
-            SDL_RenderCopy(renderizador, cartas_texturas[i], NULL, &cartas_player[i]);
-
-        // Carta selecionada grande em cima
-        if (cartaSelecionada >= 0)
-            SDL_RenderCopy(renderizador, cartas_texturas[cartaSelecionada], NULL, &carta_grande);
-
+            SDL_RenderCopy(renderizador, cartasNPC[cartaNPCSelecionada].textura, NULL, &cartaNPC_rect);
+        if(cartaSelecionada >= 0)
+            SDL_RenderCopy(renderizador, cartasJogador[cartaSelecionada].textura, NULL, &carta_grande);
         SDL_RenderPresent(renderizador);
     }
 
