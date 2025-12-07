@@ -19,6 +19,9 @@
 // Armazenar índice da carta selecionada (-1 = nenhuma)
 static int cartaSelecionada = -1;
 
+// Armazenar índice da carta NPC (-1 = ainda não selecionada)
+static int cartaNPCSelecionada = -1;
+
 // --- Função que sorteia as cartas do jogador sem repetição ---
 static inline void sortearCartas(SDL_Texture** cartas_pool, SDL_Texture** cartas_destino)
 {
@@ -59,11 +62,9 @@ static inline int RenderDojoScreen(
 
     // Cartas sorteadas que serão exibidas
     SDL_Texture* cartas_texturas[NUM_CARTAS_PLAYER];
-
-    // CHAMADA DA FUNÇÃO DE SORTEIO
     sortearCartas(cartas_pool, cartas_texturas);
 
-    // Textura das cartas azuis (NPC)
+    // Textura das cartas azuis (base)
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
 
     SDL_Rect cartas_player[NUM_CARTAS_PLAYER];
@@ -74,7 +75,7 @@ static inline int RenderDojoScreen(
     int card_h = 200;
     int pos_y = ALTURA - card_h;
 
-    // Cartas azuis 
+    // Cartas azuis (base)
     for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
         cartas_azuis[i].x = i * (card_w / 2);
         cartas_azuis[i].y = pos_y;
@@ -98,6 +99,9 @@ static inline int RenderDojoScreen(
     carta_grande.x = LARGURA - carta_grande.w - 30;
     carta_grande.y = 40;
 
+    // Retângulo carta NPC
+    SDL_Rect cartaNPC_rect = {40, 40, 350, 350}; 
+
     while (true) {
 
         if (AUX_WaitEventTimeout(evento, timeout)) {
@@ -112,13 +116,20 @@ static inline int RenderDojoScreen(
                     if(mx >= cartas_player[i].x && mx <= cartas_player[i].x + cartas_player[i].w &&
                        my >= cartas_player[i].y && my <= cartas_player[i].y + cartas_player[i].h)
                     {
-                        cartaSelecionada = i; // registra a carta clicada
+                        cartaSelecionada = i;
                         clicouNaCarta = true;
+
+                        // NPC escolhe carta aleatória **somente após jogador clicar**
+                        if(cartaNPCSelecionada == -1){
+                            cartaNPCSelecionada = rand() % NUM_CARTAS_POOL;
+                        }
+
                         break;
                     }
                 }
                 if(!clicouNaCarta){
-                    cartaSelecionada = -1; // clicou fora, desmarcar
+                    cartaSelecionada = -1;
+                    cartaNPCSelecionada = -1; // reset se clicar fora
                 }
             }
 
@@ -137,14 +148,19 @@ static inline int RenderDojoScreen(
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
 
-        // NPC
+        // NPC (base azul)
         for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
             SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
+
+        // Carta NPC aleatória só se jogador já selecionou
+        if(cartaNPCSelecionada != -1)
+            SDL_RenderCopy(renderizador, cartas_pool[cartaNPCSelecionada], NULL, &cartaNPC_rect);
 
         // Jogador (sorteadas)
         for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
             SDL_RenderCopy(renderizador, cartas_texturas[i], NULL, &cartas_player[i]);
 
+        // Carta selecionada grande em cima
         if (cartaSelecionada >= 0)
             SDL_RenderCopy(renderizador, cartas_texturas[cartaSelecionada], NULL, &carta_grande);
 
