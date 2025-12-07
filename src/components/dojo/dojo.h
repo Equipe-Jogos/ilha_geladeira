@@ -13,10 +13,27 @@
 #include "../../texturas/leitura_arquivos.c"
 #include "../../texturas/globais.c"
 
+#define NUM_CARTAS_PLAYER 3
+#define NUM_CARTAS_POOL 5
+
+// === Função auxiliar para sortear cartas sem repetição ===
+static void sortearCartas(SDL_Texture* destino[], SDL_Texture* pool[], int poolSize, int qtdCartas) {
+    bool usados[NUM_CARTAS_POOL] = {false};
+
+    for (int i = 0; i < qtdCartas; i++) {
+        int idx;
+        do {
+            idx = rand() % poolSize;
+        } while (usados[idx]);
+        usados[idx] = true;
+        destino[i] = pool[idx];
+    }
+}
+
 static inline int RenderDojoScreen(
     SDL_Window *janela,
     SDL_Renderer *renderizador,
-    SDL_Event * evento,
+    SDL_Event *evento,
     Uint32 *timeout,
     GameState *estadoJogo
 )
@@ -28,53 +45,58 @@ static inline int RenderDojoScreen(
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture* background_textura = lista_txt.inicio[TEX_FUNDO_DOJO].txt;
 
-    const int num_cartas = 5;
+    // texturas cartas jogador
+    SDL_Texture* cartas_pool[NUM_CARTAS_POOL] = {
+        lista_txt.inicio[TEX_AGUA_3].txt,
+        lista_txt.inicio[TEX_FOGO_4].txt,
+        lista_txt.inicio[TEX_FOGO_7].txt,
+        lista_txt.inicio[TEX_GELO_5].txt,
+        lista_txt.inicio[TEX_GELO_6].txt
+    };
 
-    // Cartas jogador - texturas
-    SDL_Texture* cartas_texturas[num_cartas];
-    cartas_texturas[0] = lista_txt.inicio[TEX_AGUA_3].txt;
-    cartas_texturas[1] = lista_txt.inicio[TEX_FOGO_4].txt;
-    cartas_texturas[2] = lista_txt.inicio[TEX_FOGO_7].txt;
-    cartas_texturas[3] = lista_txt.inicio[TEX_GELO_5].txt;
-    cartas_texturas[4] = lista_txt.inicio[TEX_GELO_6].txt;
+    // Cartas sorteadas que serão exibidas
+    SDL_Texture* cartas_texturas[NUM_CARTAS_PLAYER];
 
-    // Cartas azuis - textura
+    // Sorteio sem repetição
+    sortearCartas(cartas_texturas, cartas_pool, NUM_CARTAS_POOL, NUM_CARTAS_PLAYER);
+
+    // Textura das cartas azuis (NPC)
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
 
-    SDL_Rect cartas_player[num_cartas];
-    SDL_Rect cartas_azuis[num_cartas];
+    SDL_Rect cartas_player[NUM_CARTAS_PLAYER];
+    SDL_Rect cartas_azuis[NUM_CARTAS_PLAYER];
 
-    // === POSICIONAMENTO DAS CARTAS ===
+    // === POSICIONAMENTO ===
     int card_w = 200;
     int card_h = 200;
-    int margem_inferior = 25;
+    int pos_y = ALTURA - card_h;
 
     // Cartas azuis 
-    int pos_y = ALTURA - card_h;
-    for(int i = 0; i < num_cartas; i++) {
+    for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
         cartas_azuis[i].x = i * (card_w / 2);
         cartas_azuis[i].y = pos_y;
         cartas_azuis[i].w = card_w;
         cartas_azuis[i].h = card_h;
     }
 
-    int espacamento = (card_w / 2);
-    for(int i = num_cartas - 1; i >= 0; i--) {
-        cartas_player[i].x = LARGURA - card_w - ( (num_cartas - 1 - i) * espacamento );
+    // Cartas do jogador 
+    int espacamento = card_w / 2;
+    for (int i = NUM_CARTAS_PLAYER - 1; i >= 0; i--) {
+        cartas_player[i].x = LARGURA - card_w - ((NUM_CARTAS_PLAYER - 1 - i) * espacamento);
         cartas_player[i].y = pos_y;
         cartas_player[i].w = card_w;
         cartas_player[i].h = card_h;
     }
 
-    while(true){
+    while (true) {
 
-        if (AUX_WaitEventTimeout(evento, timeout)){
-            if(evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE){
+        if (AUX_WaitEventTimeout(evento, timeout)) {
+            if (evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE) {
                 *estadoJogo = STATE_MENU;
                 IMG_Quit();
                 return 1;
             }
-            if(evento->type == SDL_QUIT){
+            if (evento->type == SDL_QUIT) {
                 *estadoJogo = STATE_SAIR;
                 IMG_Quit();
                 return 0;
@@ -84,12 +106,12 @@ static inline int RenderDojoScreen(
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
 
-        // Cartas azuis 
-        for(int i = 0; i < num_cartas; i++)
+        // NPC
+        for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
             SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
 
-        // Cartas do jogador
-        for(int i = 0; i < num_cartas; i++)
+        // Jogador (sorteadas)
+        for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
             SDL_RenderCopy(renderizador, cartas_texturas[i], NULL, &cartas_player[i]);
 
         SDL_RenderPresent(renderizador);
