@@ -36,9 +36,26 @@ static inline int RenderDojoScreen(
     SDL_Rect background = {0,0,LARGURA, ALTURA};
     SDL_Texture* background_textura = lista_txt.inicio[TEX_FUNDO_DOJO].txt;
 
-    // Carta azul
-    SDL_Rect carta_azul = {600,400,100, 100};
+    // Cartas azuis
+    const int num_cartas = 5;
+    SDL_Rect cartas_azuis[num_cartas];
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
+
+    // Configurações das cartas
+    int larguraCarta = 100;
+    int alturaCarta = 100;
+    int margem = 20;
+    
+    int larguraTotal = num_cartas * larguraCarta + (num_cartas - 1) * margem;
+    int posInicialX = ((LARGURA - larguraTotal) / 2) - 300;  
+    int posY = ALTURA - alturaCarta - 40;
+
+    for(int i = 0; i < num_cartas; i++){
+        cartas_azuis[i].x = posInicialX + i * (larguraCarta + margem);
+        cartas_azuis[i].y = posY;
+        cartas_azuis[i].w = larguraCarta;
+        cartas_azuis[i].h = alturaCarta;
+    }
 
     while(true){
     
@@ -63,9 +80,15 @@ static inline int RenderDojoScreen(
 
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
-        SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &carta_azul);
+
+        // Renderiza as 5 cartas azuis
+        for(int i = 0; i < num_cartas; i++){
+            SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
+        }
+
         SDL_RenderPresent(renderizador);
     }
+
     SDL_DestroyTexture(background_textura);
     SDL_DestroyTexture(carta_azul_textura);
     IMG_Quit();
