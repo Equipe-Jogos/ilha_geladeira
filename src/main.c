@@ -14,6 +14,7 @@
 
 int main(int args, char* argc[]) {
     SDL_Event evento;
+    int dinheiro = 0;
 
     // Inicialização SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
