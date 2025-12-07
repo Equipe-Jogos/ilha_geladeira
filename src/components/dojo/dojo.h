@@ -16,17 +16,20 @@
 #define NUM_CARTAS_PLAYER 3
 #define NUM_CARTAS_POOL 5
 
-// === Função auxiliar para sortear cartas sem repetição ===
-static void sortearCartas(SDL_Texture* destino[], SDL_Texture* pool[], int poolSize, int qtdCartas) {
-    bool usados[NUM_CARTAS_POOL] = {false};
+// Armazenar índice da carta selecionada (-1 = nenhuma)
+static int cartaSelecionada = -1;
 
-    for (int i = 0; i < qtdCartas; i++) {
+// --- Função que sorteia as cartas do jogador sem repetição ---
+static inline void sortearCartas(SDL_Texture** cartas_pool, SDL_Texture** cartas_destino)
+{
+    bool usados[NUM_CARTAS_POOL] = {false};
+    for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
         int idx;
         do {
-            idx = rand() % poolSize;
+            idx = rand() % NUM_CARTAS_POOL;
         } while (usados[idx]);
         usados[idx] = true;
-        destino[i] = pool[idx];
+        cartas_destino[i] = cartas_pool[idx];
     }
 }
 
@@ -57,8 +60,8 @@ static inline int RenderDojoScreen(
     // Cartas sorteadas que serão exibidas
     SDL_Texture* cartas_texturas[NUM_CARTAS_PLAYER];
 
-    // Sorteio sem repetição
-    sortearCartas(cartas_texturas, cartas_pool, NUM_CARTAS_POOL, NUM_CARTAS_PLAYER);
+    // CHAMADA DA FUNÇÃO DE SORTEIO
+    sortearCartas(cartas_pool, cartas_texturas);
 
     // Textura das cartas azuis (NPC)
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
@@ -80,17 +83,45 @@ static inline int RenderDojoScreen(
     }
 
     // Cartas do jogador 
-    int espacamento = card_w / 2;
-    for (int i = NUM_CARTAS_PLAYER - 1; i >= 0; i--) {
-        cartas_player[i].x = LARGURA - card_w - ((NUM_CARTAS_PLAYER - 1 - i) * espacamento);
+    int espacamento = card_w; 
+    for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
+        cartas_player[i].x = LARGURA - card_w - i * espacamento;
         cartas_player[i].y = pos_y;
         cartas_player[i].w = card_w;
         cartas_player[i].h = card_h;
     }
 
+    // Retângulo para carta selecionada grande
+    SDL_Rect carta_grande = {0};
+    carta_grande.w = 350;
+    carta_grande.h = 350;
+    carta_grande.x = LARGURA - carta_grande.w - 30;
+    carta_grande.y = 40;
+
     while (true) {
 
         if (AUX_WaitEventTimeout(evento, timeout)) {
+
+            // === Seleção de carta do jogador ===
+            if (evento->type == SDL_MOUSEBUTTONDOWN) {
+                int mx = evento->button.x;
+                int my = evento->button.y;
+
+                bool clicouNaCarta = false;
+                for (int i = 0; i < NUM_CARTAS_PLAYER; i++) {
+                    if(mx >= cartas_player[i].x && mx <= cartas_player[i].x + cartas_player[i].w &&
+                       my >= cartas_player[i].y && my <= cartas_player[i].y + cartas_player[i].h)
+                    {
+                        cartaSelecionada = i; // registra a carta clicada
+                        clicouNaCarta = true;
+                        break;
+                    }
+                }
+                if(!clicouNaCarta){
+                    cartaSelecionada = -1; // clicou fora, desmarcar
+                }
+            }
+
             if (evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE) {
                 *estadoJogo = STATE_MENU;
                 IMG_Quit();
@@ -113,6 +144,9 @@ static inline int RenderDojoScreen(
         // Jogador (sorteadas)
         for (int i = 0; i < NUM_CARTAS_PLAYER; i++)
             SDL_RenderCopy(renderizador, cartas_texturas[i], NULL, &cartas_player[i]);
+
+        if (cartaSelecionada >= 0)
+            SDL_RenderCopy(renderizador, cartas_texturas[cartaSelecionada], NULL, &carta_grande);
 
         SDL_RenderPresent(renderizador);
     }
