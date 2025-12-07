@@ -75,6 +75,8 @@ typedef enum {
     TEX_FOGO_7,
     TEX_GELO_5,
     TEX_GELO_6,
+    TEX_PERDEU, 
+    TEX_GANHOU,
 
     TEX_TOTAL // sempre deixar por último!
 } TexturaID;
