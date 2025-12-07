@@ -26,7 +26,16 @@ static inline int RenderLoadingScreen(
     SDL_Rect carregamento = {0, 0, 1, 20};
     bool carregando = true;
     int qnt;
-    TexturaInfo *info_txt = carregar_texturas("/home/vboxuser/dev/ilha/src/texturas/menu.json", &qnt);
+
+    const char *relativo = "texturas/menu.json";
+
+    // --- 2. Pega o caminho base do executável (SDL garante válido em Windows/Linux/macOS) ---
+    char *base = SDL_GetBasePath();
+
+    // --- 3. Monta o caminho completo ---
+    char caminho_completo[512];
+    snprintf(caminho_completo, sizeof(caminho_completo), "%s%s", base, relativo);
+    TexturaInfo *info_txt = carregar_texturas(caminho_completo, &qnt);
 
     inicializa_lista_textura(&lista_txt, info_txt, qnt);
 
