@@ -30,7 +30,7 @@ static inline int RenderDojoScreen(
 
     const int num_cartas = 5;
 
-    // Cartas jogador
+    // Cartas jogador - texturas
     SDL_Texture* cartas_texturas[num_cartas];
     cartas_texturas[0] = lista_txt.inicio[TEX_AGUA_3].txt;
     cartas_texturas[1] = lista_txt.inicio[TEX_FOGO_4].txt;
@@ -38,7 +38,7 @@ static inline int RenderDojoScreen(
     cartas_texturas[3] = lista_txt.inicio[TEX_GELO_5].txt;
     cartas_texturas[4] = lista_txt.inicio[TEX_GELO_6].txt;
 
-    // Cartas azuis
+    // Cartas azuis - textura
     SDL_Texture* carta_azul_textura = lista_txt.inicio[TEX_CARTA_AZUL].txt;
 
     SDL_Rect cartas_player[num_cartas];
@@ -49,7 +49,7 @@ static inline int RenderDojoScreen(
     int card_h = 200;
     int margem_inferior = 25;
 
-    // Cartas azuis (seu código original permanece!)
+    // Cartas azuis 
     int pos_y = ALTURA - card_h;
     for(int i = 0; i < num_cartas; i++) {
         cartas_azuis[i].x = i * (card_w / 2);
@@ -58,7 +58,6 @@ static inline int RenderDojoScreen(
         cartas_azuis[i].h = card_h;
     }
 
-    // Cartas do jogador (apenas o X foi corrigido — desenhar da direita para a esquerda)
     int espacamento = (card_w / 2);
     for(int i = num_cartas - 1; i >= 0; i--) {
         cartas_player[i].x = LARGURA - card_w - ( (num_cartas - 1 - i) * espacamento );
@@ -66,8 +65,6 @@ static inline int RenderDojoScreen(
         cartas_player[i].w = card_w;
         cartas_player[i].h = card_h;
     }
-
-    // ================================
 
     while(true){
 
@@ -87,7 +84,7 @@ static inline int RenderDojoScreen(
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background_textura, NULL, &background);
 
-        // Cartas azuis (NPC)
+        // Cartas azuis 
         for(int i = 0; i < num_cartas; i++)
             SDL_RenderCopy(renderizador, carta_azul_textura, NULL, &cartas_azuis[i]);
 
