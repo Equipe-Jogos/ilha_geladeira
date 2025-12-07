@@ -8,25 +8,10 @@
 #include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/objeto.c"
-
-// ---------------- ENUMS ----------------
-
-typedef enum {
-    BALAO1,
-    BALAO2,
-    CONTINUAR,
-    LOGO,
-    TOTAL_ELEMENTOS,
-    VOLTAR,
-    VOLTAR_HOVER
-} Elementos;
+#include "../../texturas/globais.c"
+#include "../../texturas/texturaid.c"
 
 // ---------------- VARIÁVEIS GLOBAIS ----------------
-
-// Variáveis globais de textura
-SDL_Texture *pinguins[TOTAL];
-SDL_Texture *cores[TOTAL];
-SDL_Texture *elementos[TOTAL_ELEMENTOS];
 
 // Declaração global da cor selecionada
 extern Cor corSelecionada;
@@ -37,47 +22,6 @@ Cor corSelecionada = AMARELO; // Definição única aqui
 
 
 // ---------------- FUNÇÕES ----------------
-
-static inline void carregaImagens(SDL_Renderer *renderizador) {
-    pinguins[AMARELO]     = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_amarelo.png");
-    pinguins[AVERMELHADO] = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_avermelhado.png");
-    pinguins[AZUL_FORTE]  = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_azul_forte.png");
-    pinguins[AZUL_FRACO]  = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_azul_fraco.png");
-    pinguins[CIANO]       = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_ciano.png");
-    pinguins[CINZA]       = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_cinza.png");
-    pinguins[LARANJA]     = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_laranja.png");
-    pinguins[MARROM]      = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_marrom.png");
-    pinguins[PRETO]       = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_preto.png");
-    pinguins[ROSA_MEDIO]  = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_rosa_medio.png");
-    pinguins[ROXO]        = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_roxo.png");
-    pinguins[VERDE_FORTE] = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_verde_forte.png");
-    pinguins[VERDE_MEDIO] = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_verde_medio.png");
-    pinguins[VERDE_VOMITO]= IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_verde_vomito.png");
-    pinguins[VERMELHO]    = IMG_LoadTexture(renderizador, "imgs/personalizar/pinguim_vermelho.png");
-
-    cores[AMARELO]        = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_amarelo.png");
-    cores[AVERMELHADO]    = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_avermelhado.png");
-    cores[AZUL_FORTE]     = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_azul_forte.png");
-    cores[AZUL_FRACO]     = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_azul_fraco.png");
-    cores[CIANO]          = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_ciano.png");
-    cores[CINZA]          = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_cinza.png");
-    cores[LARANJA]        = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_laranja.png");
-    cores[MARROM]         = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_marrom.png");
-    cores[PRETO]          = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_preto.png");
-    cores[ROSA_MEDIO]     = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_rosa.png");
-    cores[ROXO]           = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_roxo.png");
-    cores[VERDE_FORTE]    = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_verde_forte.png");
-    cores[VERDE_MEDIO]    = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_verde_medio.png");
-    cores[VERDE_VOMITO]   = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_verde_vomito.png");
-    cores[VERMELHO]       = IMG_LoadTexture(renderizador, "imgs/personalizar/cor_vermelho.png");
-
-    elementos[BALAO1]       = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-1.png");
-    elementos[BALAO2]       = IMG_LoadTexture(renderizador, "imgs/personalizar/balao-2.png");
-    elementos[CONTINUAR]    = IMG_LoadTexture(renderizador, "imgs/personalizar/memu_elementos.png");
-    elementos[LOGO]         = IMG_LoadTexture(renderizador, "imgs/capa.png");
-    elementos[VOLTAR]       = IMG_LoadTexture(renderizador, "imgs/botoes/b_voltar.png");
-    elementos[VOLTAR_HOVER] = IMG_LoadTexture(renderizador, "imgs/botoes/b_voltar_clicado.png");
-}
 
 static inline int RenderPersonalizacaoScreen(
     SDL_Window *janela, 
@@ -91,8 +35,7 @@ static inline int RenderPersonalizacaoScreen(
     SDL_SetWindowFullscreen(janela, SDL_WINDOW_FULLSCREEN_DESKTOP);
     SDL_SetWindowPosition(janela, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     
-    carregaImagens(renderizador);
-    SDL_Texture *pinguim_img = pinguins[AMARELO];
+    SDL_Texture *pinguim_img = lista_txt.inicio[TEX_PINGUIM_AMARELO].txt;
     corSelecionada = AMARELO;
 
     int LARGURA, ALTURA;
@@ -100,25 +43,21 @@ static inline int RenderPersonalizacaoScreen(
 
     Objeto background;
     background.rect = (SDL_Rect){0, 0, LARGURA, ALTURA};
-    background.txt = IMG_LoadTexture(renderizador, "imgs/background_personalizar.png");
+    background.txt = lista_txt.inicio[TEX_BACKGROUND_PERSONALIZAR].txt;
 
     Objeto quadro;
     quadro.rect = (SDL_Rect){LARGURA*0.55, ALTURA*0.20, LARGURA*0.45, ALTURA*0.56};
-    quadro.txt = IMG_LoadTexture(renderizador, "imgs/personalizar/quadro.png");
+    quadro.txt = lista_txt.inicio[TEX_QUADRO].txt;
 
     
     int tam_botao_x = 400, tam_botao_y = 120;
 
     SDL_Rect pinguim= {200, 100, 400, 400};
-   // SDL_Rect balao1= {150, 400, 200, 200};
-    //SDL_Rect balao2= {800, 100, 200, 200};
     Objeto escolha;
 
     escolha.rect = (SDL_Rect){LARGURA*0.60, ALTURA*0.20, LARGURA*0.35, ALTURA*0.05};
-    escolha.txt = IMG_LoadTexture(renderizador, "imgs/personalizar/escolha.png");
-    SDL_Rect continuar= {800, 400, 200, 200};
+    escolha.txt = lista_txt.inicio[TEX_ESCOLHA].txt;
     SDL_Rect voltar= {LARGURA/7, (4*ALTURA)/5, tam_botao_x, tam_botao_y};
-    SDL_Rect corte = {30,200, 100,80 };
 
     SDL_Rect rectCores[TOTAL];
 
@@ -144,11 +83,10 @@ static inline int RenderPersonalizacaoScreen(
         SDL_RenderClear(renderizador);
         SDL_RenderCopy(renderizador, background.txt, NULL, &background.rect);
         SDL_RenderCopy(renderizador, quadro.txt, NULL, &quadro.rect);
-        //SDL_RenderCopy(renderizador, elementos[BALAO1], NULL , &balao1);
-        //SDL_RenderCopy(renderizador, elementos[BALAO2], NULL , &balao2);
         SDL_RenderCopy(renderizador, escolha.txt, NULL , &escolha.rect);
-        SDL_RenderCopy(renderizador, elementos[CONTINUAR], &corte , &continuar);
-        SDL_RenderCopy(renderizador, SDL_PointInRect(&mouse, &voltar) ? elementos[VOLTAR_HOVER] : elementos[VOLTAR], NULL, &voltar);
+        SDL_RenderCopy(renderizador, SDL_PointInRect(&mouse, &voltar) ?
+        lista_txt.inicio[TEX_ELEMENTO_VOLTAR_HOVER].txt : lista_txt.inicio[TEX_ELEMENTO_VOLTAR].txt,
+          NULL, &voltar);
 
         if (AUX_WaitEventTimeout(evento, timeout)) {
             if (evento->type == SDL_MOUSEBUTTONDOWN) {
@@ -158,7 +96,7 @@ static inline int RenderPersonalizacaoScreen(
                 }
                 for (int i = 0; i < TOTAL; i++) {
                     if (SDL_PointInRect(&mouse, &rectCores[i])) {
-                        pinguim_img = pinguins[i];
+                        pinguim_img = lista_txt.inicio[i+TEX_PINGUIM_AMARELO].txt;
                         corSelecionada = (Cor)i; // 🔹 Atualiza a cor global
                     }
                 }
@@ -171,7 +109,7 @@ static inline int RenderPersonalizacaoScreen(
 
         SDL_RenderCopy(renderizador, pinguim_img, NULL , &pinguim);
         for (int i = 0; i < TOTAL; i++) {
-            SDL_RenderCopy(renderizador, cores[i], NULL , &rectCores[i]);
+            SDL_RenderCopy(renderizador, lista_txt.inicio[i + TEX_COR_AMARELO].txt, NULL , &rectCores[i]);
         }
         SDL_RenderPresent(renderizador);
     }

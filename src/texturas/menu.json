@@ -1,0 +1,53 @@
+{
+  "texturas": [
+    { "nome": "background_menu",  "caminho": "imgs/background_menu.png" },
+    { "nome": "logo",             "caminho": "imgs/logo.png" },
+    { "nome": "jogar",            "caminho": "imgs/botoes/b_jogar.png" },
+    { "nome": "jogar_hover",      "caminho": "imgs/botoes/b_jogar_clicado.png" },
+    { "nome": "personalizar",     "caminho": "imgs/botoes/b_personalizar.png" },
+    { "nome": "personalizar_hover", "caminho": "imgs/botoes/b_personalizar_clicado.png" },
+    { "nome": "sair",             "caminho": "imgs/botoes/b_sair.png" },
+    { "nome": "sair_hover",        "caminho": "imgs/botoes/b_sair_clicado.png" },
+
+    { "nome": "pinguim_amarelo",            "caminho": "imgs/personalizar/pinguim_amarelo.png" },
+    { "nome": "pinguim_avermelhado",        "caminho": "imgs/personalizar/pinguim_avermelhado.png" },
+    { "nome": "pinguim_azul_forte",         "caminho": "imgs/personalizar/pinguim_azul_forte.png" },
+    { "nome": "pinguim_azul_fraco",         "caminho": "imgs/personalizar/pinguim_azul_fraco.png" },
+    { "nome": "pinguim_ciano",              "caminho": "imgs/personalizar/pinguim_ciano.png" },
+    { "nome": "pinguim_cinza",              "caminho": "imgs/personalizar/pinguim_cinza.png" },
+    { "nome": "pinguim_laranja",            "caminho": "imgs/personalizar/pinguim_laranja.png" },
+    { "nome": "pinguim_marrom",             "caminho": "imgs/personalizar/pinguim_marrom.png" },
+    { "nome": "pinguim_preto",              "caminho": "imgs/personalizar/pinguim_preto.png" },
+    { "nome": "pinguim_rosa_medio",         "caminho": "imgs/personalizar/pinguim_rosa_medio.png" },
+    { "nome": "pinguim_roxo",               "caminho": "imgs/personalizar/pinguim_roxo.png" },
+    { "nome": "pinguim_verde_forte",        "caminho": "imgs/personalizar/pinguim_verde_forte.png" },
+    { "nome": "pinguim_verde_medio",        "caminho": "imgs/personalizar/pinguim_verde_medio.png" },
+    { "nome": "pinguim_verde_vomito",       "caminho": "imgs/personalizar/pinguim_verde_vomito.png" },
+    { "nome": "pinguim_vermelho",           "caminho": "imgs/personalizar/pinguim_vermelho.png" },
+
+    { "nome": "cor_amarelo",                "caminho": "imgs/personalizar/cor_amarelo.png" },
+    { "nome": "cor_avermelhado",            "caminho": "imgs/personalizar/cor_avermelhado.png" },
+    { "nome": "cor_azul_forte",             "caminho": "imgs/personalizar/cor_azul_forte.png" },
+    { "nome": "cor_azul_fraco",             "caminho": "imgs/personalizar/cor_azul_fraco.png" },
+    { "nome": "cor_ciano",                  "caminho": "imgs/personalizar/cor_ciano.png" },
+    { "nome": "cor_cinza",                  "caminho": "imgs/personalizar/cor_cinza.png" },
+    { "nome": "cor_laranja",                "caminho": "imgs/personalizar/cor_laranja.png" },
+    { "nome": "cor_marrom",                 "caminho": "imgs/personalizar/cor_marrom.png" },
+    { "nome": "cor_preto",                  "caminho": "imgs/personalizar/cor_preto.png" },
+    { "nome": "cor_rosa_medio",             "caminho": "imgs/personalizar/cor_rosa.png" },
+    { "nome": "cor_roxo",                   "caminho": "imgs/personalizar/cor_roxo.png" },
+    { "nome": "cor_verde_forte",            "caminho": "imgs/personalizar/cor_verde_forte.png" },
+    { "nome": "cor_verde_medio",            "caminho": "imgs/personalizar/cor_verde_medio.png" },
+    { "nome": "cor_verde_vomito",           "caminho": "imgs/personalizar/cor_verde_vomito.png" },
+    { "nome": "cor_vermelho",               "caminho": "imgs/personalizar/cor_vermelho.png" },
+
+    
+    { "nome": "elemento_voltar",            "caminho": "imgs/botoes/b_voltar.png" },
+    { "nome": "elemento_voltar_hover",      "caminho": "imgs/botoes/b_voltar_clicado.png" },
+    { "nome": "background_personalizar",    "caminho": "imgs/background_personalizar.png" },
+    { "nome": "quadro",                     "caminho": "imgs/personalizar/quadro.png" },
+    { "nome": "escolha",                     "caminho": "imgs/personalizar/escolha.png" }
+  ]
+}
+
+

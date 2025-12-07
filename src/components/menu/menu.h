@@ -8,6 +8,9 @@
 #include "../../utils/Aux_Timeout.h"
 #include "../personalizacao/personalizacao.h"
 #include "../../utils/objeto.c"
+#include "../../texturas/globais.c"
+#include "../../texturas/texturaid.c"
+
 
 
 
@@ -32,28 +35,27 @@ static inline int RenderMenuScreen(
 
     Objeto background;
     background.rect = (SDL_Rect){0, 0, LARGURA, ALTURA};
-    background.txt = IMG_LoadTexture(renderizador, "imgs/background_menu.png");
+    background.txt = lista_txt.inicio[TEX_BACKGROUND_MENU].txt;
 
 
 
     Objeto logo;
     logo.rect = (SDL_Rect){LARGURA*0.325, ALTURA*0.05, LARGURA*0.40, ALTURA*0.40};
-    logo.txt = IMG_LoadTexture(renderizador, "imgs/logo.png");
+    logo.txt = lista_txt.inicio[TEX_LOGO].txt;
 
     Objeto jogar;
     jogar.rect = (SDL_Rect){LARGURA*0.25, ALTURA*0.40, LARGURA*0.55, ALTURA*0.20};
-    jogar.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/botoes/b_jogar.png");
-    jogar.txt_clicado = IMG_LoadTexture(renderizador, "imgs/botoes/b_jogar_clicado.png");
+    jogar.txt_nao_clicado = lista_txt.inicio[TEX_JOGAR].txt;
+    jogar.txt_clicado = lista_txt.inicio[TEX_JOGAR_HOVER].txt;
 
     Objeto personalizar;
     personalizar.rect = (SDL_Rect){LARGURA*0.25, ALTURA*0.60, LARGURA*0.55, ALTURA*0.20};
-    personalizar.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/botoes/b_personalizar.png");
-    personalizar.txt_clicado = IMG_LoadTexture(renderizador, "imgs/botoes/b_personalizar_clicado.png");
-
+    personalizar.txt_nao_clicado = lista_txt.inicio[TEX_PERSONALIZAR].txt;
+    personalizar.txt_clicado = lista_txt.inicio[TEX_PERSONALIZAR_HOVER].txt;
     Objeto sair;
     sair.rect = (SDL_Rect){LARGURA*0.25, ALTURA*0.80, LARGURA*0.55, ALTURA*0.20};
-    sair.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/botoes/b_sair.png");
-    sair.txt_clicado = IMG_LoadTexture(renderizador, "imgs/botoes/b_sair_clicado.png");
+    sair.txt_nao_clicado = lista_txt.inicio[TEX_SAIR].txt;
+    sair.txt_clicado = lista_txt.inicio[TEX_SAIR_HOVER].txt;
   
     while(true){
         SDL_GetMouseState(&mouse.x, &mouse.y);
@@ -109,6 +111,7 @@ static inline int RenderMenuScreen(
                     break;
                 case SDL_QUIT:
                     *estadoJogo = STATE_SAIR;
+                    libera_lista_texturas(&lista_txt);
                     IMG_Quit();
                     return 0;
                     break;

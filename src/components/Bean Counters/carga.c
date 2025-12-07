@@ -9,10 +9,9 @@
 // -----------------------------
 //        STRUCT CARGA
 // -----------------------------
-typedef struct 
-{
+typedef struct Carga {
     SDL_Rect rect;
-    SDL_Texture * txt;
+    SDL_Texture *txt;
     int tipo;
 
     double pos_x;
@@ -20,6 +19,7 @@ typedef struct
 
     double velocidade_x;
     double velocidade_y;
+
     Uint32 tempo_anterior_carga;
     bool ativo;
     int tempo;
@@ -30,170 +30,245 @@ typedef struct
     bool fade;
     double alpha;
 
+    struct Carga *prox; // ← LISTA ENCADEADA
 
 } Carga;
 
 
-//Vetor de cargas
-typedef struct 
-{
-    Carga * cargas;
-    int tamanho;
-    int ultimo_index;
+
+typedef struct {
+    Carga *inicio; // cabeça da lista
     int prob;
+} ListaCarga;
 
-} Vetor_carga;
 
-void inicializa_vetor_carga(Vetor_carga * vetor,int tam)
+void inicializa_lista_carga(ListaCarga *lista)
 {
-    vetor->tamanho = tam;
-    vetor->cargas = malloc(tam*sizeof(Carga));
-    vetor->ultimo_index = -1;
+    lista->inicio = NULL;
+    lista->prob = 0;
 }
 
-void inicializa_carga(SDL_Renderer * renderizador, Carga * carga)
+
+Carga* cria_carga(SDL_Renderer *renderizador)
 {
-    carga->rect = (SDL_Rect){ LARGURA * 0.85, ALTURA*0.52, LARGURA*0.07, LARGURA*0.07 };
-    carga->alpha = 255;
-    carga->pos_x = carga->rect.x;
-    carga->pos_y = carga->rect.y;
-    carga->tempo_anterior_carga = 0;
-    carga->fade = false;
+    Carga *c = malloc(sizeof(Carga));
+
+    c->rect = (SDL_Rect){ LARGURA * 0.85, ALTURA * 0.52, LARGURA * 0.07, LARGURA * 0.07 };
+    c->alpha = 255;
+    c->pos_x = c->rect.x;
+    c->pos_y = c->rect.y;
+    c->tempo_anterior_carga = 0;
+    c->fade = false;
+
     double space_x = limite_esq + rand() % (limite_dir - limite_esq + 1);
-    carga->pos_inicial = carga->pos_y;
-    carga->destino = (int)ALTURA*0.72;
+    c->pos_inicial = c->pos_y;
+    c->destino = (int)ALTURA * 0.72;
     double space_y = ALTURA * 0.13;
 
     double dx = space_x - LARGURA * 0.85;
-    double dy = space_y - carga->pos_y;
+    double dy = space_y - c->pos_y;
 
-    // 1) escolha uma velocidade horizontal fixa (boa para não sair da tela)
-    carga->velocidade_x = -300;   // você pode ajustar depois
+    c->velocidade_x = -300;
+    c->tempo = fabs(dx) / fabs(c->velocidade_x);
+    c->velocidade_y = (dy - 0.5 * gravidade * c->tempo * c->tempo) / c->tempo;
 
-    // 2) tempo necessário para atingir o X
-    carga->tempo = fabs(dx) / fabs(carga->velocidade_x);
+    c->tipo = rand() % 4;
 
-    // 3) velocidade Y correta para atingir o destino Y no mesmo tempo
-    carga->velocidade_y = (dy - 0.5 * gravidade * carga->tempo * carga->tempo) / carga->tempo;
-
-    carga->tipo = rand()%4;
-    
-    switch (carga->tipo)
+    switch (c->tipo)
     {
         case GRAOS:
-            carga->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Coffe_bag.webp");
+            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Coffe_bag.webp");
             break;
         case PEIXE:
-            carga->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Fish_bean_counters.webp");
+            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Fish_bean_counters.webp");
             break;
         case BIGORNA:
-            carga->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Anvil.webp");
+            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Anvil.webp");
             break;
         case VASO:
-            carga->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Flower_pot.webp");
-            break;
-        default:
+            c->txt = IMG_LoadTexture(renderizador, "imgs/bean_counters/Flower_pot.webp");
             break;
     }
 
-    carga->teste = (SDL_Rect){space_x,200,10,10};
-    carga->ativo = true;
+    c->teste = (SDL_Rect){ space_x, 200, 10, 10 };
+    c->ativo = true;
+
+    c->prox = NULL;
+
+    return c;
 }
 
 
-void sorteia_carga(SDL_Renderer *renderizador, Vetor_carga * vetor)
+
+void adiciona_carga(ListaCarga *lista, Carga *nova)
 {
-    vetor->prob = rand()%80;
-    if (vetor->tamanho > vetor->ultimo_index)
+    nova->prox = lista->inicio;
+    lista->inicio = nova;
+}
+
+void sorteia_carga(SDL_Renderer *renderizador, ListaCarga *lista)
+{
+    lista->prob = rand() % 80;
+
+    if (lista->prob == 13)
     {
-        if (vetor->prob == 13)
-        {
-            inicializa_carga(renderizador,&vetor->cargas[++vetor->ultimo_index]);
-        }
+        Carga *c = cria_carga(renderizador);
+        adiciona_carga(lista, c);
     }
 }
 
-void draw_cargas(SDL_Renderer * renderizador,Vetor_carga * vetor)
-{
-    for (int i = 0; i <= vetor->ultimo_index; i++)
-    {
-        Carga * carga = &vetor->cargas[i]; 
-        if (carga->ativo)
-        {
-            if (carga->fade)
-            {
-                carga->alpha -= 255 * (SDL_GetTicks() - carga->tempo_queda)/2000;
-                if ( carga->alpha <= 0)
-                { 
-                     carga->alpha = 0;
-                    carga->ativo = false;
-
-                }
-                SDL_SetTextureAlphaMod(carga->txt,  carga->alpha);
-            }
-
-            if(carga->tipo == GRAOS)
-            {
-                double angulo;
-                double porc = ((abs(carga->rect.y-carga->pos_inicial)) /(carga->destino-carga->pos_inicial));
-
-                if (porc <= 0.25)
-                {
-                    angulo = 0;
-                }
-                else if (porc <=0.50)
-                {
-                    angulo = 45;
-                }
-                else if (porc <= 0.75)
-                {
-                    angulo = 90;
-                }
-                else 
-                {
-                    angulo = 180;
-                }
-                
-                SDL_RenderCopyEx(renderizador, carga->txt, NULL, &carga->rect, angulo, NULL, SDL_FLIP_NONE);
-            }
-            else
-            {
-                SDL_RenderCopy(renderizador, carga->txt,NULL, &carga->rect);
-            }
-        }
-    }
-}
-
-// ==================================================
-//   FÍSICA DA CARGA — DT CORRETO, SEM MUDAR PINGUIM
-// ==================================================
-void calcula_movimento_carga(Carga *carga)
+void calcula_movimento_carga(Carga *c)
 {
     Uint32 agora = SDL_GetTicks();
 
-    if (carga->tempo_anterior_carga == 0)
-        carga->tempo_anterior_carga = agora;
+    if (c->tempo_anterior_carga == 0)
+        c->tempo_anterior_carga = agora;
 
-    double dt = (agora - carga->tempo_anterior_carga) / 1000.0;
-    carga->tempo_anterior_carga = agora;
+    double dt = (agora - c->tempo_anterior_carga) / 1000.0;
+    c->tempo_anterior_carga = agora;
 
-    // Física REAL
-    carga->velocidade_y += gravidade * dt;
-    carga->pos_x += carga->velocidade_x * dt;
-    carga->pos_y += carga->velocidade_y * dt;
+    c->velocidade_y += gravidade * dt;
+    c->pos_x += c->velocidade_x * dt;
+    c->pos_y += c->velocidade_y * dt;
 
-    carga->rect.x = (int)carga->pos_x;
-    carga->rect.y = (int)carga->pos_y;
+    c->rect.x = (int)c->pos_x;
+    c->rect.y = (int)c->pos_y;
+}
+
+void calcula_movimento_cargas(ListaCarga *lista)
+{
+    for (Carga *c = lista->inicio; c != NULL; c = c->prox)
+    {
+        if (!c->fade)
+            calcula_movimento_carga(c);
+    }
+}
+
+void remove_carga(ListaCarga *lista, Carga *carga)
+{
+    if (!lista->inicio || !carga)
+        return;
+
+    Carga *atual = lista->inicio;
+    Carga *anterior = NULL;
+
+    while (atual != NULL)
+    {
+        if (atual == carga)
+        {
+            // Ajusta encadeamento
+            if (anterior == NULL)
+            {
+                lista->inicio = atual->prox;
+            }
+            else
+            {
+                anterior->prox = atual->prox;
+            }
+
+            // Libera recursos
+            if (atual->txt)
+                SDL_DestroyTexture(atual->txt);
+
+            free(atual);
+            return; // acabou
+        }
+
+        anterior = atual;
+        atual = atual->prox;
+    }
 }
 
 
-void calcula_movimento_cargas(Vetor_carga * vetor)
+void draw_cargas(SDL_Renderer *renderizador, ListaCarga *lista)
 {
-    for (int i=0;i<= vetor->ultimo_index; i++)
-    {
-        if (!vetor->cargas[i].fade)
-        calcula_movimento_carga(&vetor->cargas[i]);
-    }
+    Carga *c = lista->inicio;
 
+    while (c != NULL)
+    {
+        Carga *prox = c->prox; // ← guarda o próximo antes de possível remoção
+
+        if (c->ativo)
+        {
+            if (c->fade)
+            {
+                c->alpha -= 255 * (SDL_GetTicks() - c->tempo_queda) / 2000;
+
+                if (c->alpha <= 0)
+                {
+                    remove_carga(lista, c);
+                    c = prox;
+                    continue;   // ← evita usar carga apagada
+                }
+
+                SDL_SetTextureAlphaMod(c->txt, c->alpha);
+            }
+
+            if (c->tipo == GRAOS)
+            {
+                double porc = fabs(c->rect.y - c->pos_inicial) /
+                              (c->destino - c->pos_inicial);
+
+                double angulo =
+                    (porc <= 0.25) ? 0 :
+                    (porc <= 0.50) ? 45 :
+                    (porc <= 0.75) ? 90 : 180;
+
+                SDL_RenderCopyEx(renderizador, c->txt, NULL, &c->rect,
+                                 angulo, NULL, SDL_FLIP_NONE);
+            }
+            else
+            {
+                SDL_RenderCopy(renderizador, c->txt, NULL, &c->rect);
+            }
+        }
+
+        c = prox; // anda para o próximo
+    }
+}
+
+
+void remove_cargas_mortas(ListaCarga *lista)
+{
+    Carga *atual = lista->inicio;
+    Carga *anterior = NULL;
+
+    while (atual != NULL)
+    {
+        if (!atual->ativo)
+        {
+            if (anterior == NULL)
+                lista->inicio = atual->prox;
+            else
+                anterior->prox = atual->prox;
+
+            SDL_DestroyTexture(atual->txt);
+            free(atual);
+
+            if (anterior == NULL)
+                atual = lista->inicio;
+            else
+                atual = anterior->prox;
+        }
+        else
+        {
+            anterior = atual;
+            atual = atual->prox;
+        }
+    }
+}
+
+
+void libera_lista_carga(ListaCarga *lista)
+{
+    Carga *c = lista->inicio;
+
+    while (c)
+    {
+        Carga *prox = c->prox;
+        SDL_DestroyTexture(c->txt);
+        free(c);
+        c = prox;
+    }
 }
 #endif

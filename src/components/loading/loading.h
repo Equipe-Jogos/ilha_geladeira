@@ -6,43 +6,54 @@
 #include <stdbool.h>
 #include "../../consts/consts.h"
 #include "../../utils/Aux_Timeout.h"
+#include "../../texturas/leitura_arquivos.c"
+#include "../../texturas/globais.c"
 
 static inline int RenderLoadingScreen(
-    SDL_Window *janela, 
-    SDL_Renderer *renderizador, 
-    SDL_Event *evento, 
+    SDL_Window *janela,
+    SDL_Renderer *renderizador,
+    SDL_Event *evento,
     Uint32 *timeout,
-    GameState *estadoJogo
-) {
-    
+    GameState *estadoJogo)
+{
+
     SDL_Texture *capa = IMG_LoadTexture(renderizador, "imgs/capa.png");
 
     int LARGURA, ALTURA;
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
-    
+
     SDL_Rect img_capa = {0, 0, LARGURA, ALTURA};
     SDL_Rect carregamento = {0, 0, 1, 20};
     bool carregando = true;
-    int velocidade = LARGURA / 100;
+    int qnt;
+    TexturaInfo *info_txt = carregar_texturas("/home/vboxuser/dev/ilha/src/texturas/menu.json", &qnt);
 
-    while (carregando) {
+    inicializa_lista_textura(&lista_txt, info_txt, qnt);
 
+    carregamento.w = LARGURA * lista_txt.porcentagem_txt_lidas;
+
+    while (carregando)
+    {
+        SDL_PumpEvents();
         if (AUX_WaitEventTimeout(evento, timeout))
         {
-
         }
 
-        if (carregamento.w < LARGURA) {
-            SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
-            SDL_RenderClear(renderizador);
-            SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
-            SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
-            SDL_RenderFillRect(renderizador, &carregamento);
-            carregamento.w += velocidade; 
-            SDL_RenderPresent(renderizador);
-        }else {
+        if (lista_txt.texturas_lidas_sucesso < lista_txt.qnt_texturas)
+        {
+            le_prox_textura(&lista_txt,renderizador);
+            carregamento.w = LARGURA*lista_txt.porcentagem_txt_lidas;
+        }
+        else
+        {
             carregando = false;
         }
+        SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
+        SDL_RenderClear(renderizador);
+        SDL_RenderCopy(renderizador, capa, NULL, &img_capa);
+        SDL_SetRenderDrawColor(renderizador, 0, 255, 0, 0);
+        SDL_RenderFillRect(renderizador, &carregamento);
+        SDL_RenderPresent(renderizador);
     }
     *estadoJogo = STATE_MENU;
     // Liberando recursos

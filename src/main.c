@@ -8,7 +8,8 @@
 #include "./components/minigames/pega_puffle.h"
 #include "./components/game_screen/game_screen.h"
 #include "./components/Bean Counters/bean_counters.h"
-
+#include "texturas/globais.c"
+#include "texturas/texturaid.c"
 
 int main(int args, char* argc[]) {
     SDL_Event evento;
