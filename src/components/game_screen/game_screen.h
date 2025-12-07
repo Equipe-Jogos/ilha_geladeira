@@ -2,6 +2,7 @@
 #define CENTER_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h> 
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -14,13 +15,30 @@
 #include "../../utils/objeto.c"
 
 
-static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout, GameState *estadoJogo) {
+static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizador, SDL_Event * evento, Uint32 *timeout, GameState *estadoJogo, char dinheiro[10]) {
     int LARGURA, ALTURA;
     int mouse_x, mouse_y;
     char caminho[100];
 
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
     SDL_GetMouseState(&mouse_x, &mouse_y);
+
+    TTF_Init();
+    TTF_Font *fonte = TTF_OpenFont("fonts/Lovelo/lovelo_black.otf", 50);
+    SDL_Color corTexto = {255, 255, 0, 255}; // Amarelo
+
+    SDL_Surface* textoSurface = TTF_RenderText_Blended(fonte, dinheiro, corTexto);
+    SDL_Texture* textoTexture = SDL_CreateTextureFromSurface(renderizador, textoSurface);
+
+    SDL_Rect textoRect;
+    textoRect.w = 100;
+    textoRect.h = 100;
+    textoRect.x = 100; 
+    textoRect.y = 0;  
+
+    SDL_FreeSurface(textoSurface);
+
+
 
     IMG_Init(IMG_INIT_PNG);
     SDL_Texture *centroIMG = IMG_LoadTexture(renderizador, "imgs/centro.png");    
@@ -163,8 +181,10 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         //SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 100);
         
         SDL_RenderCopy(renderizador, textura_atual, NULL, &pinguimRect);
-        SDL_RenderCopy(renderizador, moeda_textura, NULL, &moeda); // Moeda
-
+        
+        // Dinheiro
+        SDL_RenderCopy(renderizador, moeda_textura, NULL, &moeda); 
+        SDL_RenderCopy(renderizador, textoTexture, NULL, &textoRect);
         SDL_RenderPresent(renderizador);
     }
 
