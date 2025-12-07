@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>  // necessário para atoi() e sprintf()
 #include "../../utils/Aux_Timeout.h"
 #include "../../utils/Aux_monitor.h"
 #include "../personalizacao/personalizacao.h"
@@ -83,7 +84,7 @@ static inline int RenderDojoScreen(
     SDL_Event *evento,
     Uint32 *timeout,
     GameState *estadoJogo,
-    int *dinheiro // variável passada como parâmetro para premiação
+    char dinheiro[10]  // agora é string
 ) {
     srand(time(NULL));
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
@@ -185,7 +186,7 @@ static inline int RenderDojoScreen(
                 Carta cNPC = cartasNPC[cartaNPCSelecionada];
                 int resultado = compararCartas(cJog, cNPC);
 
-                // Atualiza pontuação
+                // Atualiza pontuação apenas
                 if (resultado == 1) jogadorScore += 3;
                 else if (resultado == -1) npcScore += 3;
                 else { jogadorScore += 1; npcScore += 1; }
@@ -242,8 +243,12 @@ static inline int RenderDojoScreen(
 
             case DUEL_FINALIZADO:
                 // Premiação apenas no resultado final
-                if (jogadorScore > npcScore) *dinheiro += 100;
-                else if (jogadorScore == npcScore) *dinheiro += 50;
+                {
+                    int dinheiro_int = atoi(dinheiro); // converte string para int
+                    if (jogadorScore > npcScore) dinheiro_int += 100;
+                    else if (jogadorScore == npcScore) dinheiro_int += 50;
+                    sprintf(dinheiro, "%d", dinheiro_int); // atualiza string
+                }
 
                 *estadoJogo = STATE_JOGANDO;
                 IMG_Quit();
