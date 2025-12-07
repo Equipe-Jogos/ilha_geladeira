@@ -8,6 +8,7 @@
 #include "./components/minigames/pega_puffle.h"
 #include "./components/game_screen/game_screen.h"
 #include "./components/Bean Counters/bean_counters.h"
+#include "./components/dojo/dojo.h"
 #include "texturas/globais.c"
 #include "texturas/texturaid.c"
 

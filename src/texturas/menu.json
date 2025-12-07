@@ -65,8 +65,9 @@
     { "nome": "bean_pinguim6",              "caminho": "imgs/bean_counters/penguin6.webp" },
     { "nome": "bean_pinguim_bigorna",       "caminho": "imgs/bean_counters/penguin_anvil.webp"},
     { "nome": "bean_pinguim_peixe",         "caminho": "imgs/bean_counters/penguin_fish.webp" },
-    { "nome": "bean_pinguim_vaso",          "caminho": "imgs/bean_counters/penguin_pot.webp" }
-    
+    { "nome": "bean_pinguim_vaso",          "caminho": "imgs/bean_counters/penguin_pot.webp" },
+
+    { "nome": "fundo_dojo",          "caminho": "imgs/dojo/background.png" }    
   ]
 }
 
