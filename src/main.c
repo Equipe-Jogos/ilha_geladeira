@@ -11,6 +11,7 @@
 #include "./components/dojo/dojo.h"
 #include "texturas/globais.c"
 #include "texturas/texturaid.c"
+#include "./components/dojo/dojo.h"
 
 int main(int args, char* argc[]) {
     SDL_Event evento;
@@ -53,7 +54,6 @@ int main(int args, char* argc[]) {
 
     // Estado inicial
     GameState estadoJogo = STATE_LOADING;
-
     // Loop principal da FSM
     while (rodando) {
                 
@@ -80,6 +80,10 @@ int main(int args, char* argc[]) {
 
             case STATE_PEGA_PUFFLE:
                 RenderPegaPuffleScreen(janela, renderizador, &evento, &timeout, &estadoJogo);
+                break;
+
+            case STATE_DOJO:
+                RenderDojoScreen(janela, renderizador, &evento, &timeout, &estadoJogo,dinheiro);
                 break;
 
             case STATE_SAIR:

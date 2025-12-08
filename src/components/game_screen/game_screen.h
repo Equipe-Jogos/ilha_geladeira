@@ -69,6 +69,11 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
     pega_puffle.txt_nao_clicado = IMG_LoadTexture(renderizador, "imgs/pet_shop.png");
     pega_puffle.txt_clicado = IMG_LoadTexture(renderizador, "imgs/pet_shop_hover.png");
 
+    Objeto dojo;
+    dojo.rect = (SDL_Rect){(LARGURA*0.60), (ALTURA*0.22), LARGURA*0.3, ALTURA*0.3};
+    dojo.txt_nao_clicado = lista_txt.inicio[TEX_CENTRO_DOJO].txt;
+    dojo.txt_clicado = lista_txt.inicio[TEX_CENTRO_DOJO_HOVER].txt;
+
     float escalar_velocidade = 1, velocidade_x = 0, velocidade_y = 0;
     SDL_Point_Float pinguim_posicao = {(LARGURA/2.0f), (ALTURA/2.0f)};
     SDL_Point_Float destino = {(LARGURA/2.0f), (ALTURA/2.0f)};
@@ -134,6 +139,15 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
            pega_puffle.txt = pega_puffle.txt_nao_clicado; 
         }
 
+         if (SDL_PointInRect(&mouse,&dojo.rect))
+        {
+            dojo.txt = dojo.txt_clicado;
+        }
+        else
+        {
+           dojo.txt = dojo.txt_nao_clicado; 
+        }
+
           if (
             SDL_PointInRect(
                 &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
@@ -151,6 +165,16 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
             )
         ) {
             *estadoJogo = STATE_PEGA_PUFFLE;
+            return 1;
+        }
+
+        if (
+            SDL_PointInRect(
+                &(SDL_Point){(int)pinguim_posicao.x + (pinguimRect.w/2), (int)pinguim_posicao.y + (2*pinguimRect.h/3)}, 
+                &dojo.rect
+            )
+        ) {
+            *estadoJogo = STATE_DOJO;
             return 1;
         }
 
@@ -176,6 +200,8 @@ static inline int RenderGameScreen(SDL_Window *janela, SDL_Renderer *renderizado
         SDL_RenderCopy(renderizador, centroIMG, NULL, &centroRect);
 
         SDL_RenderCopy(renderizador, pega_puffle.txt, NULL, &pega_puffle.rect);
+
+        SDL_RenderCopy(renderizador, dojo.txt, NULL, &dojo.rect);
         //SDL_SetRenderDrawColor(renderizador, 255, 0, 0, 100);
          SDL_RenderCopy(renderizador, coffe.txt, NULL, &coffe.rect);
         //SDL_SetRenderDrawColor(renderizador, 0, 0, 255, 100);

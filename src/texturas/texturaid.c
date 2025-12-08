@@ -79,6 +79,8 @@ typedef enum {
     TEX_GANHOU,
 
     TEX_MOEDA,
+    TEX_CENTRO_DOJO,
+    TEX_CENTRO_DOJO_HOVER,
 
     TEX_TOTAL // sempre deixar por último!
 } TexturaID;
