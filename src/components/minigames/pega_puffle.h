@@ -41,11 +41,14 @@ static inline int RenderPegaPuffleScreen(
     int num_puffles = 1;
     int altura_puffle = ALTURA/18;
     int largura_puffle = ALTURA/18;
-    
+
+    SDL_Rect hitbox1 = {17*LARGURA/40, ALTURA/2, LARGURA/30, ALTURA/4};
+    SDL_Rect hitbox2 = {10*LARGURA/24, 3*ALTURA/4, 2*LARGURA/11, ALTURA/15}; 
+    SDL_Rect hitbox3 = {45*LARGURA/80, ALTURA/2, LARGURA/30, ALTURA/4};
+
     SDL_Rect cenario_rect = {0, 0, LARGURA, ALTURA};
     SDL_Point_Float mouse = {0, 0}, posicoes_puffles[num_puffles];
     SDL_Rect puffle_rects[num_puffles];
-    bool puffle_andando[num_puffles];
     float distancias[num_puffles], direcoes_rad[num_puffles];
     Velocidade velocidades[num_puffles];
     float escalar_velocidade = 1.0f;
@@ -53,30 +56,13 @@ static inline int RenderPegaPuffleScreen(
     for (int i = 0; i < num_puffles; i++) {
         puffle_rects[i] = (SDL_Rect){LARGURA/2, ALTURA/2, altura_puffle, largura_puffle};
         posicoes_puffles[i] = (SDL_Point_Float){puffle_rects[0].x, puffle_rects[0].y};	
-        puffle_andando[i] = false;
         distancias[i] = 0;
         direcoes_rad[i] = 0;
         velocidades[i] = (Velocidade){0.0f, 0.0f};
     }
   
     while (true) {
-        for (int i = 0; i < num_puffles; i++) {
-            if (distancias[i] > 0.5f && distancias[i] < 100) {
-                SDL_Point nova_posicao = AtualizaPosicao(
-                    &posicoes_puffles[i].x, 
-                    &posicoes_puffles[i].y, 
-                    mouse.x - largura_puffle/2, 
-                    mouse.y - altura_puffle/2, 
-                    &velocidades[i].x, 
-                    &velocidades[i].y, 
-                    &distancias[i]
-                );
-    
-                puffle_rects[i].x = nova_posicao.x;
-                puffle_rects[i].y = nova_posicao.y;
-                puffle_andando[i] = false;
-            }
-        }
+        
 
         SDL_SetRenderDrawColor(renderizador, 255, 255, 255, 0);
         SDL_RenderClear(renderizador);
@@ -98,41 +84,58 @@ static inline int RenderPegaPuffleScreen(
                     return 1;
                 }
             } else if (evento->type == SDL_MOUSEMOTION) {
-                //printf("RECT XY: %i, %i\n", puffle_rects[0].x, puffle_rects[0].y);
-                //printf("POSICAO XY: %f, %f\n", posicoes_puffles[0].x, posicoes_puffles[0].y);
-                //printf("VELOCIDADE XY: %f, %f\n", velocidades[0].x, velocidades[0].y);
-                //printf("DISTANCIA: %f\n", distancias[0]);
-                //printf("DIRECAO: %f\n", direcoes_rad[0]);
-                //printf("MOUSE XY: %f, %f\n", mouse.x, mouse.y);
-                //printf("_____________________________________\n");
-                mouse.x = evento->motion.x;
-                mouse.y = evento->motion.y;
+                float ponto_inicial_x = evento->motion.x;
+                float ponto_inicial_y = evento->motion.y;
+                
+                
                 for (int i = 0; i < num_puffles; i++) {
+                    //calcula ponto para inverter direcao do movimento do puffle
+                    float dx = ponto_inicial_x - posicoes_puffles[i].x - largura_puffle/2;
+                    float dy = ponto_inicial_y - posicoes_puffles[i].y - altura_puffle/2;
+                    float ponto_invertido_x = ponto_inicial_x - (2 * dx);
+                    float ponto_invertido_y = ponto_inicial_y - (2 * dy);
+                    mouse.x = ponto_invertido_x;
+                    mouse.y = ponto_invertido_y;
+                    
                     CalculaDistancia(
                         posicoes_puffles[i].x,
                         posicoes_puffles[i].y,
-                        evento->motion.x - largura_puffle/2,
-                        evento->motion.y - altura_puffle/2,
+                        ponto_invertido_x ,
+                        ponto_invertido_y,
                         &distancias[i],
                         &direcoes_rad[i]
                     );
-                    if (distancias[i] < 100) {
+                    if (distancias[i] > 0.5f && distancias[i] <= 200) {
                         IniciaMovimentacao(
                             &posicoes_puffles[i].x,
                             &posicoes_puffles[i].y,
-                            evento->motion.x - largura_puffle/2,
-                            evento->motion.y - altura_puffle/2,
+                            ponto_invertido_x,
+                            ponto_invertido_y - altura_puffle/2,
                             &distancias[i],
                             &direcoes_rad[i],
                             &velocidades[i].x,
                             &velocidades[i].y,
                             escalar_velocidade
                         );
-                        puffle_andando[i] = true;
-                        velocidades[i].x = 1;
-                        velocidades[i].y = 1;
                     }
                     
+                }
+            }
+        } else {
+            for (int i = 0; i < num_puffles; i++) {
+                if (distancias[i] > 0.5f && distancias[i] <= 200) {
+                    SDL_Point nova_posicao = AtualizaPosicao(
+                        &posicoes_puffles[i].x, 
+                        &posicoes_puffles[i].y, 
+                        mouse.x - largura_puffle/2, 
+                        mouse.y - altura_puffle/2, 
+                        &velocidades[i].x, 
+                        &velocidades[i].y, 
+                        &distancias[i]
+                    );
+        
+                    puffle_rects[i].x = nova_posicao.x;
+                    puffle_rects[i].y = nova_posicao.y;
                 }
             }
         }

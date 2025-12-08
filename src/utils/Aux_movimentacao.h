@@ -11,10 +11,13 @@ static inline void CalculaDistancia(
     float destino_y,
     float *distancia,
     float *direcao_rad
-) {
-    float dx = destino_x - origem_x;
-    float dy = destino_y - origem_y;
+) { 
+    float dx = 0, dy = 0;
 
+    dx = destino_x - origem_x;
+    dy = destino_y - origem_y;
+    
+    
     *distancia = sqrt(dx*dx + dy*dy);
     *direcao_rad = atan2(dy, dx);
 }
@@ -38,8 +41,9 @@ static inline void IniciaMovimentacao(
         distancia,
         direcao_rad
     );
-    float dx = destino_x - *origem_x;
-    float dy = destino_y - *origem_y;
+    float dx = 0, dy = 0;
+    dx = destino_x - *origem_x;
+    dy = destino_y - *origem_y;   
     
     if (*distancia > 0) {
         *velocidade_x = (dx / *distancia) * escalar_velocidade;
