@@ -21,7 +21,6 @@ static inline int RenderPegaPuffleScreen(
     GameState *estadoJogo
 ) {
     int LARGURA, ALTURA;
-    int mouse_x = 0, mouse_y = 0;
     obterTamanhoJanela(janela, &LARGURA, &ALTURA);
 
     IMG_Init(IMG_INIT_PNG);
@@ -44,7 +43,7 @@ static inline int RenderPegaPuffleScreen(
     int largura_puffle = ALTURA/18;
     
     SDL_Rect cenario_rect = {0, 0, LARGURA, ALTURA};
-    SDL_Point_Float mouse = {mouse_x, mouse_y}, posicoes_puffles[num_puffles];
+    SDL_Point_Float mouse = {0, 0}, posicoes_puffles[num_puffles];
     SDL_Rect puffle_rects[num_puffles];
     bool puffle_andando[num_puffles];
     float distancias[num_puffles], direcoes_rad[num_puffles];
@@ -61,9 +60,6 @@ static inline int RenderPegaPuffleScreen(
     }
   
     while (true) {
-        SDL_GetMouseState(&mouse_x, &mouse_y);
-        mouse.x = (float)mouse_x;
-        mouse.y = (float)mouse_y;
         for (int i = 0; i < num_puffles; i++) {
             if (distancias[i] > 0.5f && distancias[i] < 100) {
                 SDL_Point nova_posicao = AtualizaPosicao(
@@ -102,12 +98,21 @@ static inline int RenderPegaPuffleScreen(
                     return 1;
                 }
             } else if (evento->type == SDL_MOUSEMOTION) {
+                //printf("RECT XY: %i, %i\n", puffle_rects[0].x, puffle_rects[0].y);
+                //printf("POSICAO XY: %f, %f\n", posicoes_puffles[0].x, posicoes_puffles[0].y);
+                //printf("VELOCIDADE XY: %f, %f\n", velocidades[0].x, velocidades[0].y);
+                //printf("DISTANCIA: %f\n", distancias[0]);
+                //printf("DIRECAO: %f\n", direcoes_rad[0]);
+                //printf("MOUSE XY: %f, %f\n", mouse.x, mouse.y);
+                //printf("_____________________________________\n");
+                mouse.x = evento->motion.x;
+                mouse.y = evento->motion.y;
                 for (int i = 0; i < num_puffles; i++) {
                     CalculaDistancia(
                         posicoes_puffles[i].x,
                         posicoes_puffles[i].y,
-                        mouse.x - largura_puffle/2,
-                        mouse.y - altura_puffle/2,
+                        evento->motion.x - largura_puffle/2,
+                        evento->motion.y - altura_puffle/2,
                         &distancias[i],
                         &direcoes_rad[i]
                     );
@@ -115,8 +120,8 @@ static inline int RenderPegaPuffleScreen(
                         IniciaMovimentacao(
                             &posicoes_puffles[i].x,
                             &posicoes_puffles[i].y,
-                            mouse.x - largura_puffle/2,
-                            mouse.y - altura_puffle/2,
+                            evento->motion.x - largura_puffle/2,
+                            evento->motion.y - altura_puffle/2,
                             &distancias[i],
                             &direcoes_rad[i],
                             &velocidades[i].x,
