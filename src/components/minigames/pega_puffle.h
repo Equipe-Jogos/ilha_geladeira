@@ -90,8 +90,8 @@ static inline int RenderPegaPuffleScreen(
                 
                 for (int i = 0; i < num_puffles; i++) {
                     //calcula ponto para inverter direcao do movimento do puffle
-                    float dx = ponto_inicial_x - posicoes_puffles[i].x - largura_puffle/2;
-                    float dy = ponto_inicial_y - posicoes_puffles[i].y - altura_puffle/2;
+                    float dx = ponto_inicial_x - posicoes_puffles[i].x;
+                    float dy = ponto_inicial_y - posicoes_puffles[i].y;
                     float ponto_invertido_x = ponto_inicial_x - (2 * dx);
                     float ponto_invertido_y = ponto_inicial_y - (2 * dy);
                     mouse.x = ponto_invertido_x;
@@ -100,8 +100,8 @@ static inline int RenderPegaPuffleScreen(
                     CalculaDistancia(
                         posicoes_puffles[i].x,
                         posicoes_puffles[i].y,
-                        ponto_invertido_x ,
-                        ponto_invertido_y,
+                        ponto_invertido_x - largura_puffle/2,
+                        ponto_invertido_y - altura_puffle/2,
                         &distancias[i],
                         &direcoes_rad[i]
                     );
@@ -109,7 +109,7 @@ static inline int RenderPegaPuffleScreen(
                         IniciaMovimentacao(
                             &posicoes_puffles[i].x,
                             &posicoes_puffles[i].y,
-                            ponto_invertido_x,
+                            ponto_invertido_x - largura_puffle/2,
                             ponto_invertido_y - altura_puffle/2,
                             &distancias[i],
                             &direcoes_rad[i],
