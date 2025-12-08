@@ -1,3 +1,6 @@
+#ifndef AUX_MOVIMENTACAO_H
+#define AUX_MOVIMENTACAO_H
+
 #include <math.h>
 #include "../consts/consts.h"
 
@@ -105,3 +108,5 @@ static inline int DefineDirecaoCardinal(
     }
     return SUL;
 }
+
+#endif
