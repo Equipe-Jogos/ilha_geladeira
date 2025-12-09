@@ -60,6 +60,11 @@ static inline SDL_Point AtualizaPosicao(
     float *velocidade_y, 
     float *distancia
 ) {
+    // Calcula vetor de direção antes do movimento
+    float dx_antes = destino_x - *origem_x;
+    float dy_antes = destino_y - *origem_y;
+    float dist_antes = sqrt(dx_antes*dx_antes + dy_antes*dy_antes);
+    
     // Atualiza posição usando variáveis float
     *origem_x += *velocidade_x;
     *origem_y += *velocidade_y;
@@ -68,14 +73,20 @@ static inline SDL_Point AtualizaPosicao(
     float dx = destino_x - *origem_x;
     float dy = destino_y - *origem_y;
     float nova_distancia = sqrt(dx*dx + dy*dy);
+    
+    // Calcula produto escalar para verificar se passou do destino
+    float produto_escalar = dx_antes * dx + dy_antes * dy;
         
-    // Se chegou perto o suficiente ou passou do destino, para no destino exato
-    if (nova_distancia < 0.5f || nova_distancia >= *distancia) {
+    // Se chegou perto o suficiente OU passou do destino (produto escalar negativo)
+    if (nova_distancia < 0.5f || produto_escalar < 0) {
         *origem_x = destino_x;
         *origem_y = destino_y;
         *velocidade_x = 0;
         *velocidade_y = 0;
         *distancia = 0;
+    } else {
+        // Atualiza a distância armazenada
+        *distancia = nova_distancia;
     }
         
     SDL_Point p = { (int)roundf(*origem_x), (int)roundf(*origem_y) };
