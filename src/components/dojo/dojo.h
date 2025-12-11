@@ -164,7 +164,7 @@ static inline int RenderDojoScreen(
             }
 
             if (evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE) {
-                *estadoJogo = STATE_MENU;
+                *estadoJogo = STATE_JOGANDO;
                 IMG_Quit();
                 return 1;
             }

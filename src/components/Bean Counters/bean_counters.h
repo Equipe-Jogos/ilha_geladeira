@@ -121,7 +121,7 @@ static inline int RenderBeanCountersScreen(
         {
             if (evento->type == SDL_KEYDOWN && evento->key.keysym.sym == SDLK_ESCAPE)
             {
-                *estadoJogo = STATE_MENU;
+                *estadoJogo = STATE_JOGANDO;
                 SDL_ShowCursor(SDL_ENABLE);
                 libera_lista_carga(&cargas_jogadas);
                 IMG_Quit();
